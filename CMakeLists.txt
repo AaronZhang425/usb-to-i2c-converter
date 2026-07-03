@@ -49,6 +49,7 @@ target_link_libraries(
         usb_to_i2c
         pico_stdlib
         hardware_i2c
+        pico_i2c_slave
 )
 
 # Add the standard include files to the build
