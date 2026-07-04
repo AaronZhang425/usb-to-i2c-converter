@@ -35,7 +35,9 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(usb_to_i2c usb_to_i2c.c )
+add_executable(usb_to_i2c
+        src/usb_to_i2c.c
+)
 
 pico_set_program_name(usb_to_i2c "usb_to_i2c")
 pico_set_program_version(usb_to_i2c "0.1")
@@ -52,9 +54,13 @@ target_link_libraries(
         pico_i2c_slave
 )
 
-# Add the standard include files to the build
+# # Add the standard include files to the build
+# target_include_directories(usb_to_i2c PRIVATE
+#         ${CMAKE_CURRENT_LIST_DIR}
+# )
+
 target_include_directories(usb_to_i2c PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 pico_add_extra_outputs(usb_to_i2c)
