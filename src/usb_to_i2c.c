@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <pico/stdlib.h>
+#include <hardware/i2c.h>
 
 #include "custom_i2c_slave.h"
 
