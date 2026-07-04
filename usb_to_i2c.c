@@ -9,16 +9,18 @@
 #define I2C_ADDR 0x17
 
 struct {
-    uint8_t mem[256],
+    uint8_t mem[256];
     uint8_t mem_addr;
 } data;
 
 void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
     switch (event) {
-        case I2C_SLAVE_REQUEST:
-            break;
-
         case I2C_SLAVE_RECEIVE:
+            data.mem[data.mem_addr] = i2c_read_byte_raw(i2c);
+            break;
+        
+        case I2C_SLAVE_REQUEST:
+            i2c_write_byte_raw(i2c, data.mem[data.mem_addr]);
             break;
 
         case I2C_SLAVE_FINISH:
