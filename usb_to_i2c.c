@@ -6,7 +6,12 @@
 #define SDA_PIN_1 2
 #define SCL_PIN_1 3
 #define LED_PIN 25
-#define I2C_ADDR 6
+#define I2C_ADDR 0x17
+
+struct {
+    uint8_t mem[256],
+    uint8_t mem_addr;
+} data;
 
 void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
     switch (event) {
