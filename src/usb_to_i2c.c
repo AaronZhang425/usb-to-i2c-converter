@@ -1,33 +1,13 @@
 #include <stdio.h>
-#include "pico/stdlib.h"
-#include "hardware/i2c.h"
-#include "pico/i2c_slave.h"
+#include <pico/stdlib.h>
+
+#include "custom_i2c_slave.h"
 
 #define SDA_PIN_1 2
 #define SCL_PIN_1 3
 #define LED_PIN 25
 #define I2C_ADDR 0x17
-
-struct {
-    uint8_t mem[256];
-    uint8_t mem_addr;
-} data;
-
-void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
-    switch (event) {
-        case I2C_SLAVE_RECEIVE:
-            data.mem[data.mem_addr] = i2c_read_byte_raw(i2c);
-            break;
-        
-        case I2C_SLAVE_REQUEST:
-            i2c_write_byte_raw(i2c, data.mem[data.mem_addr]);
-            break;
-
-        case I2C_SLAVE_FINISH:
-            break;
-    }
-
-}
+#define I2C_BUS i2c1
 
 void init() {
     gpio_init(LED_PIN);
@@ -36,19 +16,11 @@ void init() {
     // Send signal light to turn on
     gpio_put(LED_PIN, 1);
     
-    i2c_init(i2c1, 100000);
-
-    // USE EXTERNAL RESISTORS FOR I2C
-    gpio_set_function(SDA_PIN_1, GPIO_FUNC_I2C);
-    gpio_set_function(SCL_PIN_1, GPIO_FUNC_I2C);
-
-    // Set pi pico to slave
-    i2c_slave_init(i2c1, I2C_ADDR, &i2c_slave_handler);
-    
 }
 
 int main() {
     init();
+    custom_i2c_slave_init(I2C_BUS, I2C_ADDR, 100000, SDA_PIN_1, SCL_PIN_1);
 
     return 0;
 
