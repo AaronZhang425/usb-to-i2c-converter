@@ -31,7 +31,7 @@ void init() {
 
 int main() {
     init();
-    // custom_i2c_slave_init(I2C_BUS, I2C_ADDR, BAUDRATE, SDA_PIN_1, SCL_PIN_1);
+    custom_i2c_slave_init(I2C_BUS, I2C_ADDR, BAUDRATE, SDA_PIN_1, SCL_PIN_1);
 
     while (true) {
         printf("Hello there\n");
