@@ -38,7 +38,3 @@ void custom_i2c_slave_init(
     // Set pi pico to slave
     i2c_slave_init(i2c, address, &i2c_slave_handler);
 }
-
-void stop_led() {
-    gpio_put(25, 0);
-}

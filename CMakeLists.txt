@@ -45,12 +45,14 @@ pico_set_program_version(usb_to_i2c "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(usb_to_i2c 0)
-pico_enable_stdio_usb(usb_to_i2c 0)
+pico_enable_stdio_usb(usb_to_i2c 1)
 
 # Add the standard library to the build
 target_link_libraries(
         usb_to_i2c
         pico_stdlib
+        hardware_gpio
+        hardware_irq
         hardware_i2c
         pico_i2c_slave
 )
