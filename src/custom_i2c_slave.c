@@ -58,7 +58,7 @@ void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
 
 }
 
-void custom_i2c_slave_init(
+void i2c_slave_auto_init(
     i2c_inst_t* i2c,
     uint8_t address,
     uint baudrate,

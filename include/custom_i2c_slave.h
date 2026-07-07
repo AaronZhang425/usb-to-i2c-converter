@@ -8,7 +8,7 @@ typedef struct {
 
 extern slave_memory data;
 
-void custom_i2c_slave_init(
+void i2c_slave_auto_init(
     i2c_inst_t* i2c,
     uint8_t address,
     uint baudrate,
