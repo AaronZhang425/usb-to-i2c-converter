@@ -3,13 +3,19 @@
 #include <hardware/i2c.h>
 
 #include "custom_i2c_slave.h"
+#include "custom_i2c_master.h"
 
-#define SDA_PIN_1 2
-#define SCL_PIN_1 3
 #define LED_PIN 25
+
+#define SDA_SLAVE_GPIO_PIN 2
+#define SCL_SLAVE_GPIO_PIN 3
+#define I2C_SLAVE_BUS i2c1
 #define I2C_ADDR 0x17
-#define I2C_BUS i2c1
 #define BAUDRATE 100000
+
+#define SDA_MASTER_GPIO_PIN 4
+#define SCL_MASTER_GPIO_PIN 5
+#define I2C_MASTER_BUS i2c0
 
 void init() {
     stdio_init_all();
@@ -31,7 +37,21 @@ void init() {
 
 int main() {
     init();
-    i2c_slave_auto_init(I2C_BUS, I2C_ADDR, BAUDRATE, SDA_PIN_1, SCL_PIN_1);
+
+    i2c_slave_auto_init(
+        I2C_SLAVE_BUS,
+        I2C_ADDR,
+        BAUDRATE,
+        SDA_SLAVE_GPIO_PIN,
+        SCL_SLAVE_GPIO_PIN
+    );
+
+    i2c_master_auto_init(
+        I2C_MASTER_BUS,
+        BAUDRATE,
+        SDA_MASTER_GPIO_PIN,
+        SCL_MASTER_GPIO_PIN
+    );
 
     while (true) {
         printf("Hello there\n");
