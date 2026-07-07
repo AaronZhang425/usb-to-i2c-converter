@@ -65,12 +65,14 @@ void i2c_slave_auto_init(
     uint sda_pin,
     uint scl_pin
 ) {
-
-    i2c_init(i2c, baudrate);
+    gpio_init(sda_pin);
+    gpio_init(scl_pin);
 
     // USE EXTERNAL RESISTORS FOR I2C
     gpio_set_function(sda_pin, GPIO_FUNC_I2C);
     gpio_set_function(scl_pin, GPIO_FUNC_I2C);
+
+    i2c_init(i2c, baudrate);
 
     // Set pi pico to slave
     i2c_slave_init(i2c, address, &i2c_slave_handler);

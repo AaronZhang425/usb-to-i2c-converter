@@ -10,5 +10,12 @@ void i2c_master_auto_init(
     uint sda_pin,
     uint scl_pin
 ) {
-    return;
+    gpio_init(sda_pin);
+    gpio_init(scl_pin);
+
+    gpio_set_function(sda_pin, GPIO_FUNC_I2C);
+    gpio_set_function(scl_pin, GPIO_FUNC_I2C);
+
+    i2c_init(i2c, baudrate);
+
 }
