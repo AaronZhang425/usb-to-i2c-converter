@@ -38,7 +38,7 @@ void init() {
 int main() {
     init();
 
-    char buffer[256];
+    uint8_t buffer[256];
 
     i2c_slave_auto_init(
         I2C_SLAVE_BUS,
