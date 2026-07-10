@@ -39,14 +39,15 @@ add_executable(usb_to_i2c
         src/usb_to_i2c.c
         src/custom_i2c_slave.c
         src/custom_i2c_master.c
+        src/usb_hosting.c
 )
 
 pico_set_program_name(usb_to_i2c "usb_to_i2c")
 pico_set_program_version(usb_to_i2c "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(usb_to_i2c 0)
-pico_enable_stdio_usb(usb_to_i2c 1)
+pico_enable_stdio_uart(usb_to_i2c 1)
+pico_enable_stdio_usb(usb_to_i2c 0)
 
 # Add the standard library to the build
 target_link_libraries(
@@ -56,6 +57,7 @@ target_link_libraries(
         hardware_irq
         hardware_i2c
         pico_i2c_slave
+        tinyusb_host
 )
 
 # # Add the standard include files to the build

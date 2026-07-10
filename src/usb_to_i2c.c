@@ -20,12 +20,12 @@
 void init() {
     stdio_init_all();
 
-    for (int i = 0; i < 30; i++) {
-        if (stdio_usb_connected()) {
-            break; 
-        }
-        sleep_ms(100);
-    }
+    // for (int i = 0; i < 30; i++) {
+    //     if (stdio_usb_connected()) {
+    //         break; 
+    //     }
+    //     sleep_ms(100);
+    // }
 
     gpio_init(LED_PIN);
     // Set direction to output
@@ -58,7 +58,7 @@ int main() {
     i2c_read_blocking(
         I2C_MASTER_BUS,
         I2C_SLAVE_ADDR,
-        &buffer,
+        &(buffer[0]),
         32,
         false
     );
