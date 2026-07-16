@@ -30,37 +30,43 @@ void init() {
 
 int main() {
     init();
-
-    uint8_t buffer[256];
-
-    i2c_slave_auto_init(
-        I2C_SLAVE_BUS,
-        I2C_SLAVE_ADDR,
-        BAUD_RATE,
-        SDA_SLAVE_GPIO_PIN,
-        SCL_SLAVE_GPIO_PIN
-    );
-
-    i2c_master_auto_init(
-        I2C_MASTER_BUS,
-        BAUD_RATE,
-        SDA_MASTER_GPIO_PIN,
-        SCL_MASTER_GPIO_PIN
-    );
-
-    i2c_read_blocking(
-        I2C_MASTER_BUS,
-        I2C_SLAVE_ADDR,
-        &(buffer[0]),
-        32,
-        false
-    );
-
+    
     while (true) {
-        printf("Hello there\n");
+        printf("Hello world\n");
         sleep_ms(1000);
-
     }
+
+
+    // uint8_t buffer[256];
+
+    // i2c_slave_auto_init(
+    //     I2C_SLAVE_BUS,
+    //     I2C_SLAVE_ADDR,
+    //     BAUD_RATE,
+    //     SDA_SLAVE_GPIO_PIN,
+    //     SCL_SLAVE_GPIO_PIN
+    // );
+
+    // i2c_master_auto_init(
+    //     I2C_MASTER_BUS,
+    //     BAUD_RATE,
+    //     SDA_MASTER_GPIO_PIN,
+    //     SCL_MASTER_GPIO_PIN
+    // );
+
+    // i2c_read_blocking(
+    //     I2C_MASTER_BUS,
+    //     I2C_SLAVE_ADDR,
+    //     &(buffer[0]),
+    //     32,
+    //     false
+    // );
+
+    // while (true) {
+    //     printf("Hello there\n");
+    //     sleep_ms(1000);
+
+    // }
 
     return 0;
 
