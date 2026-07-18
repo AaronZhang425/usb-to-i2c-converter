@@ -30,12 +30,6 @@ void init() {
 
 int main() {
     init();
-    
-    while (true) {
-        printf("Hello world\n");
-        sleep_ms(1000);
-    }
-
 
     // uint8_t buffer[256];
 
@@ -62,11 +56,11 @@ int main() {
     //     false
     // );
 
-    // while (true) {
-    //     printf("Hello there\n");
-    //     sleep_ms(1000);
+    while (true) {
+        printf("Hello there\n");
+        sleep_ms(1000);
 
-    // }
+    }
 
     return 0;
 
