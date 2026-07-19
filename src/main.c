@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <pico/stdlib.h>
 #include <hardware/i2c.h>
+#include <tusb.h>
 
 #include "custom_i2c_slave.h"
-#include "custom_i2c_master.h"
+#include "usb_hosting.h"
+// #include "custom_i2c_master.h"
 
 #define LED_PIN 25
 
@@ -17,7 +19,7 @@
 #define SCL_MASTER_GPIO_PIN 5
 #define I2C_MASTER_BUS i2c0
 
-void init() {
+void pi_pico_init() {
     stdio_init_all();
 
     gpio_init(LED_PIN);
@@ -29,7 +31,8 @@ void init() {
 }
 
 int main() {
-    init();
+    pi_pico_init();
+    usb_hosting_init();
 
     // uint8_t buffer[256];
 
@@ -57,7 +60,9 @@ int main() {
     // );
 
     while (true) {
-        printf("Hello there\n");
+        tuh_task();
+
+        printf("Hello there\n\r");
         sleep_ms(1000);
 
     }
