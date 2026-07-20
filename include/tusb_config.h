@@ -6,8 +6,11 @@
 #define BOARD_TUH_RHPORT 0
 #define CFG_TUH_HUB 1
 #define CFG_TUH_DEVICE_MAX 3 // There are 3 ports on the hub being used
-#define CFG_TUH_HID (3 * CFG_TUH_DEVICE_MAX)
-#define CFG_TUH_HID_EP_BUFSIZE 64
 
+#define CFG_TUH_HID_EP_BUFSIZE 64
+#define CFG_TUH_CDC_EP_BUFSIZE 64
+
+#define CFG_TUH_HID (3 * CFG_TUH_DEVICE_MAX)
+#define CFG_TUH_CDC (3 * CFG_TUH_DEVICE_MAX)
 
 #endif
