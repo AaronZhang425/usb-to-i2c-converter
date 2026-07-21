@@ -36,19 +36,32 @@
 
 #include "custom_i2c_slave.h"
 
-slave_memory data;
+i2c_slave_stats i2c_slave_data = {0};
 
 void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
     switch (event) {
         case I2C_SLAVE_RECEIVE:
-            data.mem[data.mem_addr] = i2c_read_byte_raw(i2c);
+            if (i2c_slave_data.buffer_idx == 0) {
+                i2c_slave_data.device_addr = i2c_read_byte_raw(i2c);
+
+            } else {
+                i2c_slave_data.buffer[i2c_slave_data.buffer_idx] = (
+                    i2c_read_byte_raw(i2c)
+                );
+
+                i2c_slave_data.buffer_idx++;
+
+            }
+
+            // data.mem[data.mem_addr] = i2c_read_byte_raw(i2c);
             break;
         
         case I2C_SLAVE_REQUEST:
-            i2c_write_byte_raw(i2c, data.mem[data.mem_addr]);
+            // i2c_write_byte_raw(i2c, data.mem[data.mem_addr]);
             break;
 
         case I2C_SLAVE_FINISH:
+            i2c_slave_data.buffer_idx = 0;
             break;
 
         default:
