@@ -1,1 +1,1 @@
-Program to convert a USB signal to an I2C signal
+Program to convert a USB signal to an I2C signal. A Pi Pico is the master of the USB devices. The Pi Pico is connected to a Linux machine that acts as the I2C master, indirectly reading the USB devices.
