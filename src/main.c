@@ -3,7 +3,7 @@
 #include <hardware/i2c.h>
 #include <tusb.h>
 
-#include "custom_i2c_slave.h"
+#include "i2c_slave_util.h"
 #include "usb_hosting.h"
 // #include "custom_i2c_master.h"
 

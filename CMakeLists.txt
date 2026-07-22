@@ -37,7 +37,7 @@ pico_sdk_init()
 
 add_executable(usb_to_i2c
         src/main.c
-        src/custom_i2c_slave.c
+        src/i2c_slave_util.c
         src/usb_hosting.c
 )
 

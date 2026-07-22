@@ -34,7 +34,7 @@
 #include <pico/stdlib.h>
 #include <pico/i2c_slave.h>
 
-#include "custom_i2c_slave.h"
+#include "i2c_slave_util.h"
 
 i2c_slave_stats i2c_slave_data = {0};
 
