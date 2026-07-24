@@ -5,7 +5,6 @@
 
 #include "i2c_slave_util.h"
 #include "usb_hosting.h"
-// #include "custom_i2c_master.h"
 
 #define LED_PIN 25
 
@@ -42,13 +41,6 @@ int main() {
     //     BAUD_RATE,
     //     SDA_SLAVE_GPIO_PIN,
     //     SCL_SLAVE_GPIO_PIN
-    // );
-
-    // i2c_master_auto_init(
-    //     I2C_MASTER_BUS,
-    //     BAUD_RATE,
-    //     SDA_MASTER_GPIO_PIN,
-    //     SCL_MASTER_GPIO_PIN
     // );
 
     // i2c_read_blocking(
