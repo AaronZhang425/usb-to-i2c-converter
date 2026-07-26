@@ -36,7 +36,9 @@
 
 #include "i2c_slave_util.h"
 
-i2c_slave_stats i2c_slave_data = {0};
+i2c_slave_buffer_stats i2c_slave_data = {0};
+
+bool host_initialized = false;
 
 void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
     switch (event) {
@@ -70,7 +72,7 @@ void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
 
 }
 
-void i2c_slave_auto_init(
+void auto_init_i2c_slave(
     i2c_inst_t* i2c,
     uint8_t address,
     uint baudrate,

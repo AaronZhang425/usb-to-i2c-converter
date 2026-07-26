@@ -5,11 +5,11 @@ typedef struct {
     uint8_t buffer[256];
     uint8_t buffer_idx;
     uint8_t device_addr;
-} i2c_slave_stats;
+} i2c_slave_buffer_stats;
 
-extern i2c_slave_stats i2c_slave_data;
+extern i2c_slave_buffer_stats i2c_slave_data;
 
-void i2c_slave_auto_init(
+void auto_init_i2c_slave(
     i2c_inst_t* i2c,
     uint8_t address,
     uint baudrate,

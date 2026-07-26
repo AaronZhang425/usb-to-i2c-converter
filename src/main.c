@@ -35,7 +35,7 @@ int main() {
 
     // uint8_t buffer[256];
 
-    // i2c_slave_auto_init(
+    // auto_init_i2c_slave(
     //     I2C_SLAVE_BUS,
     //     I2C_SLAVE_ADDR,
     //     BAUD_RATE,
