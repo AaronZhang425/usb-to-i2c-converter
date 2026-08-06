@@ -55,7 +55,7 @@ int main() {
         tuh_task();
 
         printf("Hello there\n\r");
-        sleep_ms(1000);
+        sleep_ms(2000);
 
     }
 
