@@ -54,9 +54,6 @@ int main() {
     while (true) {
         tuh_task();
 
-        printf("Hello there\n\r");
-        sleep_ms(2000);
-
     }
 
     return 0;
