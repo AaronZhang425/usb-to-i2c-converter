@@ -19,7 +19,4 @@ void usb_hosting_init();
 //     uint16_t len
 // );
 
-
-
-
 #endif
