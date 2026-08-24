@@ -31,6 +31,34 @@ void mouse_handler(
 
 }
 
+void device_descriptor_handler(tuh_xfer_t *xfer) {
+
+}
+
+// GENERAL USB CALLBAKCS
+
+void tuh_mount_cb(uint8_t dev_addr) {
+    tusb_desc_device_t device_descriptor;
+
+    bool status = tuh_descriptor_get_device(
+        dev_addr,
+        &device_descriptor,
+        18,
+        device_descriptor_handler,
+        0
+    );
+
+    if (!status) {
+        printf("Cannot get the device descriptor");
+
+    }
+
+}
+
+void tuh_unmount_cb(uint8_t dev_addr) {
+
+}
+
 // HUMAN INTERFACE DEVICES (HID) CALLBACKS
 
 void tuh_hid_mount_cb(
@@ -89,6 +117,7 @@ void tuh_hid_report_received_cb(
     if (!tuh_hid_receive_report(dev_addr, instance)) {
         printf("Cannot recieve report");
     }
+
 }
 
 // COMMUNICATIONS DEVICE CLASS (CDC) CALLBACKS

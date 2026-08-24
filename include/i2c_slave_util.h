@@ -1,13 +1,13 @@
 #ifndef CUSTOM_I2C_SLAVE_H
 #define CUSTOM_I2C_SLAVE_H
 
-typedef struct {
+struct i2c_slave_buffer_stats {
     uint8_t buffer[256];
     uint8_t buffer_idx;
     uint8_t device_addr;
-} i2c_slave_buffer_stats;
+};
 
-extern i2c_slave_buffer_stats i2c_slave_data;
+extern struct i2c_slave_buffer_stats i2c_slave_data;
 
 void auto_init_i2c_slave(
     i2c_inst_t* i2c,

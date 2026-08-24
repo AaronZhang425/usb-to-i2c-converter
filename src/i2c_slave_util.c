@@ -35,14 +35,15 @@
 #include <pico/i2c_slave.h>
 
 #include "i2c_slave_util.h"
+#include "i2c_host_commands.h"
 
-i2c_slave_buffer_stats i2c_slave_data = {0};
+struct i2c_slave_buffer_stats i2c_slave_data = {0};
 
-bool host_initialized = false;
+// bool host_initialized = false;
 
 void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
     switch (event) {
-        case I2C_SLAVE_RECEIVE:
+        case I2C_SLAVE_RECEIVE:            
             if (i2c_slave_data.buffer_idx == 0) {
                 i2c_slave_data.device_addr = i2c_read_byte_raw(i2c);
 
