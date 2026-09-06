@@ -32,7 +32,7 @@ void mouse_handler(
 }
 
 void device_descriptor_handler(tuh_xfer_t *xfer) {
-
+    
 }
 
 // GENERAL USB CALLBAKCS
