@@ -1,6 +1,11 @@
 #ifndef USB_HOSTING_H
 #define USB_HOSTING_H
 
+// EVENT TYPES
+#define NEW_DESCRIPTOR 0
+
+extern struct event_queue *event_queue;
+
 void usb_hosting_init();
 
 // HUMAN INTERFACE DEVICE (HID) CALLBACKS

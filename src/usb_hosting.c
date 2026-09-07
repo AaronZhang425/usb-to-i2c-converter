@@ -1,7 +1,12 @@
+#include <stdlib.h>
+#include <string.h>
 #include <pico/stdlib.h>
 #include <tusb.h>
 
 #include "usb_hosting.h"
+#include "event_queue.h"
+
+struct event_queue *event_queue;
 
 void usb_hosting_init() {
     tusb_rhport_init_t host_init = {
@@ -10,6 +15,8 @@ void usb_hosting_init() {
     };
     
     tusb_init(BOARD_TUH_RHPORT, &host_init);
+
+    event_queue = new_queue();
 
 }
 
@@ -31,8 +38,42 @@ void mouse_handler(
 
 }
 
+// struct serialized_data *serialize_event(struct event *event) {
+//     struct serialized_data *serialized = calloc(
+//         1,
+//         sizeof(struct serialized_data)
+//     );
+
+//     if (!serialized) {
+//         printf("Error serializing event");
+//         return NULL;
+
+//     }
+
+// }
+
+// void destory_serizlized_event(struct serialized_data *serialized_event) {
+//     free(serialized_event->data);
+//     free(serialized_event);
+
+// }
+
+
 void device_descriptor_handler(tuh_xfer_t *xfer) {
-    
+    if (xfer->result != XFER_RESULT_SUCCESS) {
+        printf("Failed to get descriptors");
+        return;
+        
+    }
+
+    struct event event = {
+        .event_data_size = sizeof(tuh_xfer_t),
+        .event_data = xfer,
+        .event_type = 0
+    };
+
+    queue_add_by_event(event_queue, event);
+
 }
 
 // GENERAL USB CALLBAKCS
@@ -137,3 +178,4 @@ void tuh_cdc_rx_cb(uint8_t idx) {
 void tuh_cdc_tx_complete_cb(uint8_t idx) {
 
 }
+
