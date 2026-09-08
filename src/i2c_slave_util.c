@@ -41,26 +41,37 @@ struct i2c_slave_buffer_stats i2c_slave_data = {0};
 
 // bool host_initialized = false;
 
-void i2c_slave_handler(i2c_inst_t* i2c, i2c_slave_event_t event) {
+void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
+
+}
+
+void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
+    switch (i2c_read_byte_raw(i2c)) {
+        case NEW_I2C_HOST_SIG:
+            break;
+
+        case GET_MAX_USB_DEV_SIG:
+            break;
+
+        case POLL_DEVICES_SIG:
+            break;
+
+        default:
+            break;
+
+    }
+
+}
+
+void i2c_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t event) {
     switch (event) {
-        case I2C_SLAVE_RECEIVE:            
-            if (i2c_slave_data.buffer_idx == 0) {
-                i2c_slave_data.device_addr = i2c_read_byte_raw(i2c);
+        case I2C_SLAVE_RECEIVE:
+            read_from_slave_handler(i2c, &event);
 
-            } else {
-                i2c_slave_data.buffer[i2c_slave_data.buffer_idx] = (
-                    i2c_read_byte_raw(i2c)
-                );
-
-                i2c_slave_data.buffer_idx++;
-
-            }
-
-            // data.mem[data.mem_addr] = i2c_read_byte_raw(i2c);
             break;
         
         case I2C_SLAVE_REQUEST:
-            // i2c_write_byte_raw(i2c, data.mem[data.mem_addr]);
+            write_to_slave_handler(i2c, &event);
             break;
 
         case I2C_SLAVE_FINISH:
