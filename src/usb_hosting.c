@@ -5,7 +5,9 @@
 
 #include "usb_hosting.h"
 #include "event_queue.h"
+#include "tusb_config.h"
 
+uint8_t deivce_addresses[CFG_TUH_DEVICE_MAX];
 struct event_queue *event_queue;
 
 void usb_hosting_init() {
