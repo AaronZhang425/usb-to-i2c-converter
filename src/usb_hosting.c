@@ -7,8 +7,9 @@
 #include "event_queue.h"
 #include "tusb_config.h"
 
-uint8_t deivce_addresses[CFG_TUH_DEVICE_MAX];
+uint8_t device_addresses[CFG_TUH_DEVICE_MAX];
 struct event_queue *event_queue;
+
 
 void usb_hosting_init() {
     tusb_rhport_init_t host_init = {
@@ -96,9 +97,12 @@ void tuh_mount_cb(uint8_t dev_addr) {
 
     }
 
+    device_addresses[dev_addr - 1] = dev_addr;
+
 }
 
 void tuh_unmount_cb(uint8_t dev_addr) {
+    device_addresses[dev_addr - 1] = 0;
 
 }
 
