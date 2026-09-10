@@ -3,6 +3,7 @@
 #include <pico/stdlib.h>
 #include <tusb.h>
 
+#include "event_defs.h"
 #include "usb_hosting.h"
 #include "event_queue.h"
 #include "tusb_config.h"
@@ -72,7 +73,7 @@ void device_descriptor_handler(tuh_xfer_t *xfer) {
     struct event event = {
         .event_data_size = sizeof(tuh_xfer_t),
         .event_data = xfer,
-        .event_type = 0
+        .event_type = NEW_USB_DESCRIPTOR
     };
 
     queue_add_by_event(event_queue, event);
