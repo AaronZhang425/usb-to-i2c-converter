@@ -1,6 +1,8 @@
 #ifndef USB_HOSTING_H
 #define USB_HOSTING_H
 
+#define USB_DESCRIPTOR_LENGTH 18
+
 extern struct event_queue *event_queue;
 
 void usb_hosting_init();
