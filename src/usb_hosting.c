@@ -62,8 +62,7 @@ void mouse_handler(
 
 // }
 
-
-void device_descriptor_handler(tuh_xfer_t *xfer) {
+void new_device_descriptor_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Failed to get descriptors");
         return;
@@ -80,6 +79,17 @@ void device_descriptor_handler(tuh_xfer_t *xfer) {
 
 }
 
+void remove_device_descriptor_cb(tuh_xfer_t *xfer) {
+    if (xfer->result != XFER_RESULT_SUCCESS) {
+        printf("Failled to get desciptors");
+        return;
+
+    }
+
+
+}
+
+
 // GENERAL USB CALLBAKCS
 
 void tuh_mount_cb(uint8_t dev_addr) {
@@ -88,8 +98,8 @@ void tuh_mount_cb(uint8_t dev_addr) {
     bool status = tuh_descriptor_get_device(
         dev_addr,
         &device_descriptor,
-        18,
-        device_descriptor_handler,
+        USB_DESCRIPTOR_LENGTH,
+        new_device_descriptor_cb,
         0
     );
 
@@ -104,6 +114,8 @@ void tuh_mount_cb(uint8_t dev_addr) {
 
 void tuh_unmount_cb(uint8_t dev_addr) {
     device_addresses[dev_addr - 1] = 0;
+
+    
 
 }
 

@@ -25,6 +25,7 @@ void destroy_queue(struct event_queue *queue) {
     free(queue);
 
     while (next_node) {
+        free(working_node->data->event_data);
         free(working_node->data);
         free(working_node);
 
@@ -58,6 +59,7 @@ int queue_add_by_event(struct event_queue *queue, struct event event) {
 
     }
 
+    // Allocate the new event struct to contain it
     struct event *new_event = calloc(1, sizeof(struct event));
     
     if (!new_event) {
@@ -68,6 +70,7 @@ int queue_add_by_event(struct event_queue *queue, struct event event) {
     
     *new_event = event;
 
+    // Allocate data to copy the event data
     void *event_payload_copy = calloc(1, event.event_data_size);
 
     if (!event_payload_copy) {
