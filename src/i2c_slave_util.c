@@ -102,4 +102,5 @@ void auto_init_i2c_slave(
 
     // Set pi pico to slave
     i2c_slave_init(i2c, address, &i2c_slave_handler);
+    
 }
