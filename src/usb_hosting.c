@@ -86,6 +86,13 @@ void remove_device_descriptor_cb(tuh_xfer_t *xfer) {
 
     }
 
+    struct event event = {
+        .event_data_size = sizeof(tuh_xfer_t),
+        .event_data = xfer,
+        .event_type = USB_RELEASE
+    };
+
+    queue_add_by_event(event_queue, event);
 
 }
 
