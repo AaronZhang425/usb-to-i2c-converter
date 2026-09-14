@@ -39,6 +39,13 @@ void mouse_handler(
     const hid_mouse_report_t* report,
     uint16_t len    
 ) {
+    struct event mouse_event = {
+        .event_data = report,
+        .event_type = USB_MOUSE_EVENT,
+        .event_data_size = len
+    };
+
+    queue_add_by_event(event_queue, mouse_event);
 
 }
 
