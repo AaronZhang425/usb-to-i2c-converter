@@ -40,7 +40,7 @@ void mouse_handler(
     uint16_t len    
 ) {
     struct event mouse_event = {
-        .event_data = report,
+        .event_data = (void *) report,
         .event_type = USB_MOUSE_EVENT,
         .event_data_size = len
     };
@@ -140,7 +140,7 @@ void tuh_unmount_cb(uint8_t dev_addr) {
     );
 
     if (!status) {
-        print("Cannot get the device descriptor for removal");
+        printf("Cannot get the device descriptor for removal");
 
     }
 
