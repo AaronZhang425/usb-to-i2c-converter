@@ -118,7 +118,7 @@ void tuh_mount_cb(uint8_t dev_addr) {
     );
 
     if (!status) {
-        printf("Cannot get the device descriptor");
+        printf("Cannot get the device descriptor for mounting");
 
     }
 
@@ -127,9 +127,23 @@ void tuh_mount_cb(uint8_t dev_addr) {
 }
 
 void tuh_unmount_cb(uint8_t dev_addr) {
+    tusb_desc_device_t device_descriptor;
+
     device_addresses[dev_addr - 1] = 0;
 
-    
+    bool status = tuh_descriptor_get_device(
+        dev_addr,
+        &device_descriptor,
+        USB_DESCRIPTOR_LENGTH,
+        remove_device_descriptor_cb,
+        0
+    );
+
+    if (!status) {
+        print("Cannot get the device descriptor for removal");
+
+    }
+
 
 }
 
