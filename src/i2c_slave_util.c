@@ -33,6 +33,7 @@
 
 #include <pico/stdlib.h>
 #include <pico/i2c_slave.h>
+#include <tusb.h>
 
 #include "i2c_slave_util.h"
 #include "i2c_host_commands.h"
@@ -40,6 +41,8 @@
 #include "usb_hosting.h"
 
 // bool host_initialized = false;
+
+
 
 void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
