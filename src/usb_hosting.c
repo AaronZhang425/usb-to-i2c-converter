@@ -69,6 +69,31 @@ void mouse_handler(
 
 // }
 
+void get_new_device_descriptor_cb(tuh_xfer_t *xfer) {
+
+}
+
+tusb_desc_device_t *get_new_device_descriptor(uint8_t device_addr) {
+    tusb_desc_device_t *device_descriptor = malloc(sizeof(tusb_desc_device_t));
+    
+    bool status = tuh_descriptor_get_device(
+        device_addr,
+        device_descriptor,
+        USB_DESCRIPTOR_LENGTH,
+        new_device_descriptor_cb,
+        NULL
+    );
+
+    if (!status) {
+        free(device_descriptor);
+        return NULL;
+
+    }
+
+    return device_descriptor;
+
+}
+
 void new_device_descriptor_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Failed to get descriptors");
