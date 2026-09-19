@@ -24,7 +24,7 @@ void usb_hosting_init() {
 
 }
 
-void keyboard_handler(
+static void keyboard_handler(
     uint8_t dev_addr,
     uint8_t instance,
     const hid_keyboard_report_t* report,
@@ -33,7 +33,7 @@ void keyboard_handler(
 
 }
 
-void mouse_handler(
+static void mouse_handler(
     uint8_t dev_addr,
     uint8_t instance,
     const hid_mouse_report_t* report,
@@ -69,32 +69,41 @@ void mouse_handler(
 
 // }
 
-void get_new_device_descriptor_cb(tuh_xfer_t *xfer) {
+static void get_device_descriptor_cb(tuh_xfer_t *xfer) {
+    if (xfer->result != XFER_RESULT_SUCCESS) {
+        printf("Could not get device descriptor");
+
+    }
 
 }
 
-tusb_desc_device_t *get_new_device_descriptor(uint8_t device_addr) {
-    tusb_desc_device_t *device_descriptor = malloc(sizeof(tusb_desc_device_t));
+int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descriptor) {
+    *device_descriptor = malloc(sizeof(tusb_desc_device_t));
     
+    if (!(*device_descriptor)) {
+        return -1;        
+
+    }
+
     bool status = tuh_descriptor_get_device(
         device_addr,
         device_descriptor,
         USB_DESCRIPTOR_LENGTH,
-        new_device_descriptor_cb,
-        NULL
+        get_device_descriptor_cb,
+        0
     );
 
     if (!status) {
-        free(device_descriptor);
-        return NULL;
+        free(*device_descriptor);
+        return -1;
 
     }
 
-    return device_descriptor;
+    return 0;
 
 }
 
-void new_device_descriptor_cb(tuh_xfer_t *xfer) {
+[[deprecated("Use general descriptor getter")]] void new_device_descriptor_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Failed to get descriptors");
         return;
@@ -111,7 +120,8 @@ void new_device_descriptor_cb(tuh_xfer_t *xfer) {
 
 }
 
-void remove_device_descriptor_cb(tuh_xfer_t *xfer) {
+
+[[deprecated("Use general descriptor getter")]] void remove_device_descriptor_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Failled to get desciptors");
         return;
