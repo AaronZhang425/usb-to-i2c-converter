@@ -40,15 +40,12 @@
 #include "tusb_config.h"
 #include "usb_hosting.h"
 
-// bool host_initialized = false;
 
-
-
-void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
+static void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
 }
 
-void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
+static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
     uint8_t buffer[DEFAULT_BUFFER_SIZE];
 
     uint16_t used_buffer_size = 0;
@@ -77,7 +74,7 @@ void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
 }
 
-void i2c_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t event) {
+static void i2c_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t event) {
     switch (event) {
         case I2C_SLAVE_RECEIVE:
             read_from_slave_handler(i2c, &event);
