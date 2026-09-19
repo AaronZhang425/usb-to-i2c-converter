@@ -69,6 +69,12 @@ static void mouse_handler(
 
 // }
 
+// Frees a device descriptor
+void destroy_device_descriptor(tusb_desc_device_t *descriptor) {
+    free(descriptor);
+
+}
+
 static void get_device_descriptor_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Could not get device descriptor");
