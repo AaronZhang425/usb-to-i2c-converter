@@ -8,7 +8,7 @@
 #include "event_queue.h"
 #include "tusb_config.h"
 
-uint8_t device_addresses[CFG_TUH_DEVICE_MAX];
+tusb_desc_device_t *device_descriptors[CFG_TUH_DEVICE_MAX];
 struct event_queue *event_queue;
 
 
@@ -76,10 +76,10 @@ void destroy_device_descriptor(tusb_desc_device_t *descriptor) {
 }
 
 static void get_device_descriptor_cb(tuh_xfer_t *xfer) {
-    if (xfer->result != XFER_RESULT_SUCCESS) {
-        printf("Could not get device descriptor");
+    // if (xfer->result != XFER_RESULT_SUCCESS) {
+    //     printf("Could not get device descriptor");
 
-    }
+    // }
 
 }
 
@@ -148,43 +148,62 @@ int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descr
 // GENERAL USB CALLBAKCS
 
 void tuh_mount_cb(uint8_t dev_addr) {
-    tusb_desc_device_t device_descriptor;
+    tusb_desc_device_t *device_descriptor;
 
-    bool status = tuh_descriptor_get_device(
-        dev_addr,
-        &device_descriptor,
-        USB_DESCRIPTOR_LENGTH,
-        new_device_descriptor_cb,
-        0
-    );
-
-    if (!status) {
-        printf("Cannot get the device descriptor for mounting");
+    if (get_device_descriptor(dev_addr, &device_descriptor)) {
+        printf("Could not get device descriptor during mounting");
 
     }
-
-    device_addresses[dev_addr - 1] = dev_addr;
+    
+    
+    // bool status = tuh_descriptor_get_device(
+        //     dev_addr,
+        //     &device_descriptor,
+        //     USB_DESCRIPTOR_LENGTH,
+        //     new_device_descriptor_cb,
+        //     0
+        // );
+        
+        // if (!status) {
+            //     printf("Cannot get the device descriptor for mounting");
+            
+            // }
+            
+    device_descriptors[dev_addr - 1] = device_descriptor;
+    
+    // destroy_device_descriptor(device_descriptor);
 
 }
 
 void tuh_unmount_cb(uint8_t dev_addr) {
-    tusb_desc_device_t device_descriptor;
+    tusb_desc_device_t *device_descriptor = device_descriptors[dev_addr - 1]; 
 
-    device_addresses[dev_addr - 1] = 0;
-
-    bool status = tuh_descriptor_get_device(
-        dev_addr,
-        &device_descriptor,
-        USB_DESCRIPTOR_LENGTH,
-        remove_device_descriptor_cb,
-        0
-    );
-
-    if (!status) {
-        printf("Cannot get the device descriptor for removal");
+    if (device_descriptor) {
+        destroy_device_descriptor(device_descriptor);
+        device_descriptors[dev_addr - 1] = NULL;
 
     }
+    // if (get_device_descriptor(dev_addr, &device_descriptor)) {
+    //     printf("Could not get device descriptor during mounting");
 
+    // }
+
+    // device_descriptors[dev_addr - 1] = 0;
+
+    // bool status = tuh_descriptor_get_device(
+    //     dev_addr,
+    //     &device_descriptor,
+    //     USB_DESCRIPTOR_LENGTH,
+    //     remove_device_descriptor_cb,
+    //     0
+    // );
+
+    // if (!status) {
+    //     printf("Cannot get the device descriptor for removal");
+
+    // }
+    
+    // destroy_device_descriptor(device_descriptor);
 
 }
 
