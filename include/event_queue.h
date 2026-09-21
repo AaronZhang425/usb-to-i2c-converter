@@ -1,6 +1,10 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#define NEW_USB_DESCRIPTOR 0
+#define USB_RELEASE 1
+#define USB_MOUSE_EVENT 2
+
 #define MAX_QUEUE_SIZE 100
 
 struct event {
