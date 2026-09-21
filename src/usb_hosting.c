@@ -109,42 +109,6 @@ int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descr
 
 }
 
-[[deprecated("Use general descriptor getter")]] void new_device_descriptor_cb(tuh_xfer_t *xfer) {
-    if (xfer->result != XFER_RESULT_SUCCESS) {
-        printf("Failed to get descriptors");
-        return;
-        
-    }
-
-    struct event event = {
-        .event_data_size = sizeof(tuh_xfer_t),
-        .event_data = xfer,
-        .event_type = NEW_USB_DESCRIPTOR
-    };
-
-    queue_add_by_event(event_queue, event);
-
-}
-
-
-[[deprecated("Use general descriptor getter")]] void remove_device_descriptor_cb(tuh_xfer_t *xfer) {
-    if (xfer->result != XFER_RESULT_SUCCESS) {
-        printf("Failled to get desciptors");
-        return;
-
-    }
-
-    struct event event = {
-        .event_data_size = sizeof(tuh_xfer_t),
-        .event_data = xfer,
-        .event_type = USB_RELEASE
-    };
-
-    queue_add_by_event(event_queue, event);
-
-}
-
-
 // GENERAL USB CALLBAKCS
 
 void tuh_mount_cb(uint8_t dev_addr) {
