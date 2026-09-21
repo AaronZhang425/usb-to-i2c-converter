@@ -3,7 +3,6 @@
 #include <pico/stdlib.h>
 #include <tusb.h>
 
-#include "event_defs.h"
 #include "usb_hosting.h"
 #include "event_queue.h"
 #include "tusb_config.h"
