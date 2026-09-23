@@ -1,11 +1,7 @@
 /*
  * Original found here:
  * https://github.com/raspberrypi/pico-examples/blob/master/i2c/slave_mem_i2c/slave_mem_i2c.c
- *
- * Copyright (c) 2021 Valentin Milea <valentin.milea@gmail.com>
- * Copyright (c) 2023 Raspberry Pi (Trading) Ltd.
- *
- * SPDX-License-Identifier: BSD-3-Clause
+ * The code modified code is the i2c_slave_handler function
  * 
  * Copyright 2020 (c) 2020 Raspberry Pi (Trading) Ltd.
  *
@@ -40,8 +36,10 @@
 #include "tusb_config.h"
 #include "usb_hosting.h"
 
+uint8_t master_command = 0;
 
 static void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
+    master_command = i2c_read_byte_raw(i2c);
 
 }
 
@@ -50,7 +48,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
     uint16_t used_buffer_size = 0;
 
-    switch (i2c_read_byte_raw(i2c)) {
+    switch (master_command) {
         case NEW_I2C_HOST_SIG:
             for (uint8_t index = 0; index < CFG_TUH_DEVICE_MAX; index++) {
                 
@@ -70,15 +68,12 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
     }
 
-
-
 }
 
 static void i2c_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t event) {
     switch (event) {
         case I2C_SLAVE_RECEIVE:
             read_from_slave_handler(i2c, &event);
-
             break;
         
         case I2C_SLAVE_REQUEST:
