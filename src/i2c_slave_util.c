@@ -1,7 +1,7 @@
 /*
  * Original found here:
  * https://github.com/raspberrypi/pico-examples/blob/master/i2c/slave_mem_i2c/slave_mem_i2c.c
- * The code modified code is the i2c_slave_handler function
+ * The modified code is in the i2c_slave_handler function
  * 
  * Copyright 2020 (c) 2020 Raspberry Pi (Trading) Ltd.
  *
@@ -31,6 +31,7 @@
 #include <pico/i2c_slave.h>
 #include <tusb.h>
 
+
 #include "i2c_slave_util.h"
 #include "i2c_host_commands.h"
 #include "tusb_config.h"
@@ -50,8 +51,13 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
     switch (master_command) {
         case NEW_I2C_HOST_SIG:
-            for (uint8_t index = 0; index < CFG_TUH_DEVICE_MAX; index++) {
-                
+
+            for (uint8_t index = 0; index < usb_devices_connected; index++) {
+                memcpy(
+                    device_descriptors[index],
+                    &buffer[index * USB_DESCRIPTOR_LENGTH],
+                    USB_DESCRIPTOR_LENGTH
+                );
 
             }    
 

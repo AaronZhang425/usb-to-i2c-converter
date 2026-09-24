@@ -8,6 +8,8 @@
 #include "tusb_config.h"
 
 tusb_desc_device_t *device_descriptors[CFG_TUH_DEVICE_MAX];
+uint8_t usb_devices_connected = 0;
+
 struct event_queue *event_queue;
 
 
@@ -117,24 +119,10 @@ void tuh_mount_cb(uint8_t dev_addr) {
         printf("Could not get device descriptor during mounting");
 
     }
-    
-    
-    // bool status = tuh_descriptor_get_device(
-        //     dev_addr,
-        //     &device_descriptor,
-        //     USB_DESCRIPTOR_LENGTH,
-        //     new_device_descriptor_cb,
-        //     0
-        // );
-        
-        // if (!status) {
-            //     printf("Cannot get the device descriptor for mounting");
-            
-            // }
             
     device_descriptors[dev_addr - 1] = device_descriptor;
-    
-    // destroy_device_descriptor(device_descriptor);
+            
+    usb_devices_connected++;
 
 }
 
@@ -146,27 +134,8 @@ void tuh_unmount_cb(uint8_t dev_addr) {
         device_descriptors[dev_addr - 1] = NULL;
 
     }
-    // if (get_device_descriptor(dev_addr, &device_descriptor)) {
-    //     printf("Could not get device descriptor during mounting");
 
-    // }
-
-    // device_descriptors[dev_addr - 1] = 0;
-
-    // bool status = tuh_descriptor_get_device(
-    //     dev_addr,
-    //     &device_descriptor,
-    //     USB_DESCRIPTOR_LENGTH,
-    //     remove_device_descriptor_cb,
-    //     0
-    // );
-
-    // if (!status) {
-    //     printf("Cannot get the device descriptor for removal");
-
-    // }
-    
-    // destroy_device_descriptor(device_descriptor);
+    usb_devices_connected--;
 
 }
 
