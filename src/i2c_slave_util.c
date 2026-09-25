@@ -59,7 +59,11 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
                     USB_DESCRIPTOR_LENGTH
                 );
 
+                used_buffer_size += USB_DESCRIPTOR_LENGTH;
+
             }    
+
+            i2c_write_raw_blocking(i2c, buffer, used_buffer_size);
 
             break;
 
