@@ -100,7 +100,7 @@ int queue_add_by_event(struct event_queue *queue, struct event event) {
     return 0;
 }
 
-struct event_queue_node *queue_poll(struct event_queue *queue) {
+struct event_queue_node *event_queue_poll(struct event_queue *queue) {
     if (!queue->size) {
         return NULL;
 
