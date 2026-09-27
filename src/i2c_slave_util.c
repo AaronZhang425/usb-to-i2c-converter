@@ -36,6 +36,7 @@
 #include "i2c_host_commands.h"
 #include "tusb_config.h"
 #include "usb_hosting.h"
+#include "event_queue.h"
 
 uint8_t master_command = 0;
 
@@ -72,6 +73,11 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
             break;
 
         case POLL_DEVICES_SIG:
+            struct event_queue_node *event = (event_queue);
+
+            // TODO: send event
+
+            destroy_queue_node_full(event);
             break;
 
         default:

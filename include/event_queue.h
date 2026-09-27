@@ -33,6 +33,6 @@ struct event_queue *new_queue();
 void destroy_queue(struct event_queue *queue);
 void destroy_queue_node_full(struct event_queue_node *queue);
 int queue_add_by_event(struct event_queue *queue, struct event event);
-struct event_queue_node *queue_poll(struct event_queue *queue);
+struct event_queue_node *event_queue_poll(struct event_queue *queue);
 
 #endif
