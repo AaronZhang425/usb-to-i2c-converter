@@ -55,16 +55,14 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
             for (uint8_t index = 0; index < usb_devices_connected; index++) {
                 memcpy(
-                    device_descriptors[index],
                     &buffer[index * USB_DESCRIPTOR_LENGTH],
+                    device_descriptors[index],
                     USB_DESCRIPTOR_LENGTH
                 );
 
                 used_buffer_size += USB_DESCRIPTOR_LENGTH;
 
             }    
-
-            i2c_write_raw_blocking(i2c, buffer, used_buffer_size);
 
             break;
 
@@ -73,17 +71,29 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
             break;
 
         case POLL_DEVICES_SIG:
-            struct event_queue_node *event = (event_queue);
+            struct event_queue_node *event_node = (event_queue);
 
-            // TODO: send event
+            buffer[0] = event_node->data->event_type;
+
+            memcpy(
+                &buffer[1],
+                event_node->data->event_data,
+                event_node->data->event_data_size
+            );
+
+            used_buffer_size = 1 + event_node->data->event_data_size;
 
             destroy_queue_node_full(event);
+
             break;
 
         default:
-            break;
-
+            return;
+        
     }
+
+    i2c_write_raw_blocking(i2c, buffer, used_buffer_size);
+
 
 }
 
