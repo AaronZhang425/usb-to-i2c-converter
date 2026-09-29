@@ -40,38 +40,49 @@
 
 uint8_t master_command = 0;
 
+static uint8_t buffer[DEFAULT_BUFFER_SIZE];
+// uint16_t used_buffer_size = 0;
+
 static void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
     master_command = i2c_read_byte_raw(i2c);
+    // used_buffer_size = 1;
 
 }
 
 static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
-    uint8_t buffer[DEFAULT_BUFFER_SIZE];
+    // uint8_t buffer[DEFAULT_BUFFER_SIZE];
 
     uint16_t used_buffer_size = 0;
 
     switch (master_command) {
         case NEW_I2C_HOST_SIG:
-
+            buffer[0] = NEW_USB_DESCRIPTORS_EVENT;
+            used_buffer_size = 1;
+        
             for (uint8_t index = 0; index < usb_devices_connected; index++) {
                 memcpy(
-                    &buffer[index * USB_DESCRIPTOR_LENGTH],
+                    &buffer[index * USB_DESCRIPTOR_LENGTH + 1],
                     device_descriptors[index],
                     USB_DESCRIPTOR_LENGTH
                 );
 
                 used_buffer_size += USB_DESCRIPTOR_LENGTH;
 
-            }    
+            }
+
+
 
             break;
 
         case GET_MAX_USB_DEV_SIG:
-            i2c_write_byte_raw(i2c, CFG_TUH_DEVICE_MAX);
+            buffer[0] = MAX_USB_DEVICES_EVENT;
+            buffer[1] = CFG_TUH_DEVICE_MAX;
+            used_buffer_size = 2;
+
             break;
 
         case POLL_DEVICES_SIG:
-            struct event_queue_node *event_node = (event_queue);
+            struct event_queue_node *event_node = event_queue_poll(event_queue);
 
             buffer[0] = event_node->data->event_type;
 
@@ -83,7 +94,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
             used_buffer_size = 1 + event_node->data->event_data_size;
 
-            destroy_queue_node_full(event);
+            destroy_queue_node_full(event_node);
 
             break;
 
@@ -93,7 +104,6 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
     }
 
     i2c_write_raw_blocking(i2c, buffer, used_buffer_size);
-
 
 }
 
