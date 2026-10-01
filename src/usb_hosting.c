@@ -12,6 +12,7 @@ uint8_t usb_devices_connected = 0;
 
 struct event_queue *event_queue;
 
+// TODO: handle new USB devices during runtime
 
 void usb_hosting_init() {
     tusb_rhport_init_t host_init = {
