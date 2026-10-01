@@ -70,8 +70,6 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
             }
 
-
-
             break;
 
         case GET_MAX_USB_DEV_SIG:
