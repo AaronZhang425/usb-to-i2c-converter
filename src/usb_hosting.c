@@ -50,25 +50,6 @@ static void mouse_handler(
 
 }
 
-// struct serialized_data *serialize_event(struct event *event) {
-//     struct serialized_data *serialized = calloc(
-//         1,
-//         sizeof(struct serialized_data)
-//     );
-
-//     if (!serialized) {
-//         printf("Error serializing event");
-//         return NULL;
-
-//     }
-
-// }
-
-// void destory_serizlized_event(struct serialized_data *serialized_event) {
-//     free(serialized_event->data);
-//     free(serialized_event);
-
-// }
 
 // Frees a device descriptor
 void destroy_device_descriptor(tusb_desc_device_t *descriptor) {
