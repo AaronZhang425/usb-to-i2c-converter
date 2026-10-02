@@ -122,3 +122,20 @@ struct event_queue_node *event_queue_poll(struct event_queue *queue) {
     return old_head;
 
 }
+
+void clear_event_queue(struct event_queue *queue) {
+    // If queue is empty, stop
+    if (!queue->head) {
+        return;
+
+    }
+
+    struct event_queue_node *current_node = queue->head;
+    
+    // while (h) {
+
+    // }
+
+    // queue->size = 0;
+
+}

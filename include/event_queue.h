@@ -14,10 +14,10 @@ struct event {
     uint8_t event_type;
 };
 
-struct serialized_data {
-    uint8_t* data;
-    size_t length;
-};
+// struct serialized_data {
+//     uint8_t* data;
+//     size_t length;
+// };
 
 struct event_queue_node {
     struct event *data;
@@ -35,5 +35,6 @@ void destroy_queue(struct event_queue *queue);
 void destroy_queue_node_full(struct event_queue_node *queue);
 int queue_add_by_event(struct event_queue *queue, struct event event);
 struct event_queue_node *event_queue_poll(struct event_queue *queue);
+void clear_event_queue(struct event_queue *queue);
 
 #endif

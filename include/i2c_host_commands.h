@@ -10,6 +10,6 @@
 #define NEW_I2C_HOST_SIG 0
 #define GET_MAX_USB_DEV_SIG 1
 #define POLL_DEVICES_SIG 2
-#define GET_NEW_DEVICES_SIG 3
+#define DEVICE_LIST_CHANGES_SIG 3
 
 #endif
