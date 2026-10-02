@@ -96,7 +96,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
             break;
 
-        case GET_NEW_DEVICES_SIG:
+        case DEVICE_LIST_CHANGES_SIG:
             break;
 
         default:
