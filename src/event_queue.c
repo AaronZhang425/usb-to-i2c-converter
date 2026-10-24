@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "event_queue.h"
+#include "event.h"
 
 struct event_queue *new_queue(void) {
     struct event_queue *new_queue = calloc(1, sizeof(struct event_queue));

@@ -31,12 +31,12 @@
 #include <pico/i2c_slave.h>
 #include <tusb.h>
 
-
 #include "i2c_slave_util.h"
 #include "i2c_host_commands.h"
 #include "tusb_config.h"
 #include "usb_hosting.h"
 #include "event_queue.h"
+#include "event.h"
 
 uint8_t master_command = 0;
 

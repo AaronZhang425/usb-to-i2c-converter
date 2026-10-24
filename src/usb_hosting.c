@@ -6,6 +6,7 @@
 #include "usb_hosting.h"
 #include "event_queue.h"
 #include "tusb_config.h"
+#include "event.h"
 
 tusb_desc_device_t *device_descriptors[CFG_TUH_DEVICE_MAX];
 uint8_t usb_devices_connected = 0;
