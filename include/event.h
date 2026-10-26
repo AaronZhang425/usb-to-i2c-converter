@@ -1,7 +1,7 @@
 #include <stdint.h>
 
-#define NEW_USB_DESCRIPTORS_EVENT 0
-#define USB_RELEASE_EVENT 1
+#define NEW_USB_DESCRIPTORS_ADDR 0
+#define USB_ADDR_RELEASE_EVENT 1
 #define MAX_USB_DEVICES_EVENT 2
 #define USB_MOUSE_EVENT 3
 

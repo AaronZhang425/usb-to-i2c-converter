@@ -3,7 +3,8 @@
 
 #define USB_DESCRIPTOR_LENGTH 18
 
-extern tusb_desc_device_t *device_descriptors[];
+// extern tusb_desc_device_t *device_descriptors[];
+extern uint8_t device_addresses[];
 extern uint8_t usb_devices_connected; 
 // extern struct event_queue *event_queue;
 extern struct deque event_deque;

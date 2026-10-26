@@ -9,7 +9,8 @@
 #include "event.h"
 #include "deque.h"
 
-tusb_desc_device_t *device_descriptors[CFG_TUH_DEVICE_MAX];
+// tusb_desc_device_t *device_descriptors[CFG_TUH_DEVICE_MAX];
+uint8_t device_addresses[CFG_TUH_DEVICE_MAX];
 uint8_t usb_devices_connected = 0;
 
 // struct event_queue *event_queue;
@@ -105,38 +106,53 @@ int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descr
 // GENERAL USB CALLBAKCS
 
 void tuh_mount_cb(uint8_t dev_addr) {
-    tusb_desc_device_t *device_descriptor;
-
-    if (get_device_descriptor(dev_addr, &device_descriptor)) {
-        printf("Could not get device descriptor during mounting");
+    if (!dev_addr) {
+        return;
 
     }
-            
-    device_descriptors[dev_addr - 1] = device_descriptor;
-            
+
+    // tusb_desc_device_t *device_descriptor;
+
+    // if (get_device_descriptor(dev_addr, &device_descriptor)) {
+    //     printf("Could not get device descriptor during mounting");
+
+    // }
+    
+    // device_descriptors[dev_addr - 1] = device_descriptor;
+    device_addresses[dev_addr - 1] = dev_addr;
+    
+    struct event new_usb_device = {
+        .event_data_size = NEW_USB_DESCRIPTORS_ADDR,
+        .event_data = dev_addr,
+        .event_data_size = sizeof(uint8_t)
+    };
+
+    add_to_head_deque(event_deque, &new_usb_device, sizeof(struct event));
+
     usb_devices_connected++;
 
 }
 
 void tuh_unmount_cb(uint8_t dev_addr) {
-    tusb_desc_device_t *device_descriptor = device_descriptors[dev_addr - 1]; 
+    // tusb_desc_device_t *device_descriptor = device_descriptors[dev_addr - 1]; 
+    
+    device_addresses[dev_addr - 1] = 0;
 
-    struct event release_event = {
-        .event_data_size = sizeof(device_descriptor),
-        .event_data = device_descriptor,
-        .event_type = USB_RELEASE_EVENT
+    struct event release_addr_event = {
+        .event_data_size = sizeof(uint8_t),
+        .event_data = dev_addr,
+        .event_type = USB_ADDR_RELEASE_EVENT
     };
 
-    if (device_descriptor) {
-        destroy_device_descriptor(device_descriptor);
-        device_descriptors[dev_addr - 1] = NULL;
+    // if (device_descriptor) {
+    //     destroy_device_descriptor(device_descriptor);
+    //     device_descriptors[dev_addr - 1] = NULL;
 
-    }
+    // }
+
+    add_to_tail_deque(event_deque, &release_addr_event, sizeof(struct event));
 
     usb_devices_connected--;
-
-    add_to_tail_deque(event_deque, &release_event, sizeof(struct event));
-
 
 }
 
