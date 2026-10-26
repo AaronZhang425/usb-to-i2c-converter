@@ -53,7 +53,10 @@ int queue_add_by_event(struct event_queue *queue, struct event event) {
 
     }
 
-    struct event_queue_node *new_node = calloc(1, sizeof(struct event_queue_node));
+    struct event_queue_node *new_node = calloc(
+        1,
+        sizeof(struct event_queue_node)
+    );
     
     if (!new_node) {
         return -1;

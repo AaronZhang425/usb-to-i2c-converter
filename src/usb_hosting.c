@@ -7,11 +7,13 @@
 #include "event_queue.h"
 #include "tusb_config.h"
 #include "event.h"
+#include "deque.h"
 
 tusb_desc_device_t *device_descriptors[CFG_TUH_DEVICE_MAX];
 uint8_t usb_devices_connected = 0;
 
-struct event_queue *event_queue;
+// struct event_queue *event_queue;
+struct deque *event_deque;
 
 // TODO: handle new USB devices during runtime
 
@@ -23,7 +25,7 @@ void usb_hosting_init() {
     
     tusb_init(BOARD_TUH_RHPORT, &host_init);
 
-    event_queue = new_queue();
+    event_deque = new_deque();
 
 }
 
@@ -48,7 +50,8 @@ static void mouse_handler(
         .event_data_size = len
     };
 
-    queue_add_by_event(event_queue, mouse_event);
+    // queue_add_by_event(event_queue, mouse_event);
+    add_to_tail_deque(event_deque, &mouse_event, sizeof(mouse_event));
 
 }
 
@@ -60,14 +63,20 @@ void destroy_device_descriptor(tusb_desc_device_t *descriptor) {
 }
 
 static void get_device_descriptor_cb(tuh_xfer_t *xfer) {
-    // if (xfer->result != XFER_RESULT_SUCCESS) {
-    //     printf("Could not get device descriptor");
+    if (xfer->result != XFER_RESULT_SUCCESS) {
+        printf("Could not get device descriptor");
 
-    // }
+    }
 
 }
 
 int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descriptor) {
+    if (!device_descriptor) {
+        return -1;
+
+    }
+
+    
     *device_descriptor = malloc(sizeof(tusb_desc_device_t));
     
     if (!(*device_descriptor)) {
@@ -112,6 +121,12 @@ void tuh_mount_cb(uint8_t dev_addr) {
 void tuh_unmount_cb(uint8_t dev_addr) {
     tusb_desc_device_t *device_descriptor = device_descriptors[dev_addr - 1]; 
 
+    struct event release_event = {
+        .event_data_size = sizeof(device_descriptor),
+        .event_data = device_descriptor,
+        .event_type = USB_RELEASE_EVENT
+    };
+
     if (device_descriptor) {
         destroy_device_descriptor(device_descriptor);
         device_descriptors[dev_addr - 1] = NULL;
@@ -119,6 +134,9 @@ void tuh_unmount_cb(uint8_t dev_addr) {
     }
 
     usb_devices_connected--;
+
+    add_to_tail_deque(event_deque, &release_event, sizeof(struct event));
+
 
 }
 
