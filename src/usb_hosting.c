@@ -106,29 +106,28 @@ int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descr
 // GENERAL USB CALLBAKCS
 
 void tuh_mount_cb(uint8_t dev_addr) {
+    // If the device address is 0 for some reason, it is probably not set up
+    // correctly by TinyUSB
     if (!dev_addr) {
         return;
 
     }
 
-    // tusb_desc_device_t *device_descriptor;
-
-    // if (get_device_descriptor(dev_addr, &device_descriptor)) {
-    //     printf("Could not get device descriptor during mounting");
-
-    // }
-    
-    // device_descriptors[dev_addr - 1] = device_descriptor;
+    // Map device addresses to an index in the array of USB devices
+    // Subtract 1 so that index 0 is also used
     device_addresses[dev_addr - 1] = dev_addr;
     
+    // Create an event
     struct event new_usb_device = {
         .event_data_size = NEW_USB_DESCRIPTORS_ADDR,
         .event_data = dev_addr,
         .event_data_size = sizeof(uint8_t)
     };
 
+    // Add the event to the head of the deque to be processed immediately
     add_to_head_deque(event_deque, &new_usb_device, sizeof(struct event));
 
+    // Increment the number of devices connected
     usb_devices_connected++;
 
 }
@@ -144,12 +143,8 @@ void tuh_unmount_cb(uint8_t dev_addr) {
         .event_type = USB_ADDR_RELEASE_EVENT
     };
 
-    // if (device_descriptor) {
-    //     destroy_device_descriptor(device_descriptor);
-    //     device_descriptors[dev_addr - 1] = NULL;
-
-    // }
-
+    // If a device disconnects, handling the event is not as urgent as when 
+    // a device connects. Place the event at the end of the deque
     add_to_tail_deque(event_deque, &release_addr_event, sizeof(struct event));
 
     usb_devices_connected--;
