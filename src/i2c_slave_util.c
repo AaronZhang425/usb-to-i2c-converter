@@ -36,6 +36,7 @@
 #include "tusb_config.h"
 #include "usb_hosting.h"
 #include "event_queue.h"
+#include "deque.h"
 #include "event.h"
 
 uint8_t master_command = 0;
@@ -56,17 +57,18 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
     switch (master_command) {
         case NEW_I2C_HOST_SIG:
-            buffer[0] = NEW_USB_DESCRIPTORS_EVENT;
+            buffer[0] = NEW_USB_ADDR;
             used_buffer_size = 1;
         
             for (uint8_t index = 0; index < usb_devices_connected; index++) {
-                memcpy(
-                    &buffer[index * USB_DESCRIPTOR_LENGTH + 1],
-                    device_descriptors[index],
-                    USB_DESCRIPTOR_LENGTH
-                );
+                
+                // memcpy(
+                //     &buffer[index * USB_DESCRIPTOR_LENGTH + 1],
+                //     device_descriptors[index],
+                //     USB_DESCRIPTOR_LENGTH
+                // );
 
-                used_buffer_size += USB_DESCRIPTOR_LENGTH;
+                // used_buffer_size += USB_DESCRIPTOR_LENGTH;
 
             }
 
@@ -80,19 +82,24 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
             break;
 
         case POLL_DEVICES_SIG:
-            struct event_queue_node *event_node = event_queue_poll(event_queue);
+            // TODO: CHANGE THE SIGNAL TYPE. EVENTS NOW INCLUDE DEVICE DETACHMENT
+            // AND ATTACHMENT
 
-            buffer[0] = event_node->data->event_type;
+            struct deque_node *event_node = poll_head_deque(event_deque);
+
+            buffer[0] = ((struct event *) event_node->data)->event_type;
 
             memcpy(
                 &buffer[1],
-                event_node->data->event_data,
-                event_node->data->event_data_size
+                ((struct event *) event_node->data)->event_data,
+                ((struct event *) event_node->data)->event_data_size
             );
 
-            used_buffer_size = 1 + event_node->data->event_data_size;
+            used_buffer_size = (
+                1 + ((struct event *) event_node->data)->event_data_size
+            );
 
-            destroy_queue_node_full(event_node);
+            destroy_deque_node_full(event_node);
 
             break;
 

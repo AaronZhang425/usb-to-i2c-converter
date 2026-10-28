@@ -7,7 +7,7 @@
 extern uint8_t device_addresses[];
 extern uint8_t usb_devices_connected; 
 // extern struct event_queue *event_queue;
-extern struct deque event_deque;
+extern struct deque *event_deque;
 
 void usb_hosting_init();
 
