@@ -35,7 +35,6 @@
 #include "i2c_host_commands.h"
 #include "tusb_config.h"
 #include "usb_hosting.h"
-#include "event_queue.h"
 #include "deque.h"
 #include "event.h"
 

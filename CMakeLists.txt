@@ -39,7 +39,6 @@ add_executable(usb_to_i2c
         src/main.c
         src/i2c_slave_util.c
         src/usb_hosting.c
-        src/event_queue.c
         src/deque.c
 )
 

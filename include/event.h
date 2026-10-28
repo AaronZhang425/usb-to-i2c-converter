@@ -1,5 +1,3 @@
-#include <stdint.h>
-
 #define NEW_USB_ADDR 0
 #define USB_ADDR_RELEASE_EVENT 1
 #define MAX_USB_DEVICES_EVENT 2

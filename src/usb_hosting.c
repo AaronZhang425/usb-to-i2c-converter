@@ -4,7 +4,6 @@
 #include <tusb.h>
 
 #include "usb_hosting.h"
-#include "event_queue.h"
 #include "tusb_config.h"
 #include "event.h"
 #include "deque.h"
@@ -119,7 +118,7 @@ void tuh_mount_cb(uint8_t dev_addr) {
     
     // Create an event
     struct event new_usb_device = {
-        .event_data_size = NEW_USB_DESCRIPTORS_ADDR,
+        .event_data_size = NEW_USB_ADDR,
         .event_data = dev_addr,
         .event_data_size = sizeof(uint8_t)
     };
@@ -137,6 +136,7 @@ void tuh_unmount_cb(uint8_t dev_addr) {
     
     device_addresses[dev_addr - 1] = 0;
 
+    // TODO: HANDLE SETTING EVENT DATA TO A SIMPLE NUMBER RATHER THAN A POINTER
     struct event release_addr_event = {
         .event_data_size = sizeof(uint8_t),
         .event_data = dev_addr,
