@@ -11,15 +11,15 @@ struct event {
 
 
 struct event *new_event_from_raw(
-    uint8_t evnet_type,
-    uint32_t raw_data,
-    size_t event_data_type
+    uint8_t event_data_type,
+    uint64_t raw_data,
+    size_t event_data_size
 );
 
 struct event *new_event_from_ptr(
-    uint8_t event_type,
+    uint8_t event_data_type,
     void *data_ptr,
-    size_t event_data_type
+    size_t event_data_size
 );
 
 void destroy_event(struct event *event);
