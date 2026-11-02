@@ -38,16 +38,26 @@ void destroy_deque(struct deque *list) {
 
 }
 
-void destroy_deque_node_full(struct deque_node *list) {
-    if (!list) {
-        return;
+// void destroy_deque_node_full(struct deque_node *node) {
+//     if (!node) {
+//         return;
 
-    }
+//     }
 
-    free(list->data);
-    free(list);
+//     free(node->data);
+//     free(node);
 
-}
+// }
+
+// void destory_just_deque_node(struct deque_node *node) {
+//     if (!node) {
+//         return;
+
+//     }
+
+//     free(node);
+
+// }
 
 int add_to_head_deque(struct deque *list, void *data, size_t data_size) {
     if (!list) {
@@ -93,7 +103,7 @@ int add_to_head_deque(struct deque *list, void *data, size_t data_size) {
 
 }
 
-struct deque_node *poll_head_deque(struct deque *list) {
+void *poll_head_deque(struct deque *list) {
     if (!list) {
         return NULL;
 
@@ -114,12 +124,13 @@ struct deque_node *poll_head_deque(struct deque *list) {
         
     }
     
-    // Disconnect the node from the rest of the deque
-    old_head->next = NULL;
+    void *data = old_head->data;
+
+    free(old_head);
 
     list->size--;
 
-    return old_head;
+    return data;
 
 }
 
@@ -167,7 +178,7 @@ int add_to_tail_deque(struct deque *list, void *data, size_t data_size) {
 
 }
 
-struct deque_node *poll_tail_deque(struct deque *list) {
+void *poll_tail_deque(struct deque *list) {
     if (!list) {
         return NULL;
 
@@ -187,12 +198,13 @@ struct deque_node *poll_tail_deque(struct deque *list) {
 
     }
 
-    // Disconnect the polled node from the rest of the deque
-    old_tail->prev = NULL;
-    
+    void *data = old_tail->data;
+
+    free(old_tail);
+
     // Update the size of the list
     list->size--;
 
-    return old_tail;
+    return data;
 
 }

@@ -38,10 +38,9 @@
 #include "deque.h"
 #include "event.h"
 
-uint8_t master_command = 0;
+uint8_t master_command;
 
 static uint8_t buffer[DEFAULT_BUFFER_SIZE];
-// uint16_t used_buffer_size = 0;
 
 static void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
     master_command = i2c_read_byte_raw(i2c);
@@ -50,60 +49,49 @@ static void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 }
 
 static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
-    // uint8_t buffer[DEFAULT_BUFFER_SIZE];
-
     uint16_t used_buffer_size = 0;
 
     switch (master_command) {
-        case NEW_I2C_HOST_SIG:
+        case HCMD_NEW_I2C_HOST:
             buffer[0] = NEW_USB_ADDR;
             used_buffer_size = 1;
         
             for (uint8_t index = 0; index < usb_devices_connected; index++) {
-                
-                // memcpy(
-                //     &buffer[index * USB_DESCRIPTOR_LENGTH + 1],
-                //     device_descriptors[index],
-                //     USB_DESCRIPTOR_LENGTH
-                // );
-
-                // used_buffer_size += USB_DESCRIPTOR_LENGTH;
+                buffer[1 + index ] = device_addresses[index];
+                used_buffer_size++;
 
             }
 
             break;
 
-        case GET_MAX_USB_DEV_SIG:
+        case HCMD_GET_USB_DESCRIPTOR:
             buffer[0] = MAX_USB_DEVICES_EVENT;
             buffer[1] = CFG_TUH_DEVICE_MAX;
             used_buffer_size = 2;
 
             break;
 
-        case POLL_DEVICES_SIG:
+        case HCMD_GET_MAX_USB_DEV:
+            break;
+
+        case HCMD_POLL_EVENTS:
             // TODO: CHANGE THE SIGNAL TYPE. EVENTS NOW INCLUDE DEVICE DETACHMENT
             // AND ATTACHMENT
 
-            struct deque_node *event_node = poll_head_deque(event_deque);
+            struct event *event = (struct event *) poll_head_deque(event_deque);
 
-            buffer[0] = ((struct event *) event_node->data)->event_type;
+            buffer[0] = event->event_type;
 
             memcpy(
                 &buffer[1],
-                ((struct event *) event_node->data)->event_data,
-                ((struct event *) event_node->data)->event_data_size
+                event->event_data,
+                event->event_data_size
             );
 
-            used_buffer_size = (
-                1 + ((struct event *) event_node->data)->event_data_size
-            );
-
-            destroy_deque_node_full(event_node);
+            used_buffer_size = 1 + event->event_data_size;
 
             break;
 
-        case DEVICE_LIST_CHANGES_SIG:
-            break;
 
         default:
             return;
