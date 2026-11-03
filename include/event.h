@@ -9,14 +9,7 @@ struct event {
     uint8_t event_type;
 };
 
-
-struct event *new_event_from_raw(
-    uint8_t event_data_type,
-    uint64_t raw_data,
-    size_t event_data_size
-);
-
-struct event *new_event_from_ptr(
+struct event *new_event(
     uint8_t event_data_type,
     void *data_ptr,
     size_t event_data_size

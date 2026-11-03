@@ -38,20 +38,24 @@
 #include "deque.h"
 #include "event.h"
 
-uint8_t master_command;
+// Represents the command from the host
+uint8_t host_command;
+
+// Represents the argument of the host command
+uint8_t hcmd_arg;
 
 static uint8_t buffer[DEFAULT_BUFFER_SIZE];
 
 static void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
-    master_command = i2c_read_byte_raw(i2c);
-    // used_buffer_size = 1;
+    host_command = i2c_read_byte_raw(i2c);
+    hcmd_arg = i2c_read_byte_raw(i2c);
 
 }
 
 static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
     uint16_t used_buffer_size = 0;
 
-    switch (master_command) {
+    switch (host_command) {
         case HCMD_NEW_I2C_HOST:
             buffer[0] = NEW_USB_ADDR;
             used_buffer_size = 1;
@@ -64,20 +68,26 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
             break;
 
-        case HCMD_GET_USB_DESCRIPTOR:
-            buffer[0] = MAX_USB_DEVICES_EVENT;
-            buffer[1] = CFG_TUH_DEVICE_MAX;
-            used_buffer_size = 2;
+        case HCMD_GET_USB_DEV_DESC:
+            // buffer[0] = MAX_USB_DEVICES_EVENT;
+            // buffer[1] = CFG_TUH_DEVICE_MAX;
+            // used_buffer_size = 2;
 
+            break;
+
+        case HCMD_GET_USB_CONFIG_DESC:
+            break;
+
+        case HCMD_GET_USB_INTERFACE_DESC:
+            break;
+
+        case HCMD_GET_USB_ENDPOINT_DESC:
             break;
 
         case HCMD_GET_MAX_USB_DEV:
             break;
 
         case HCMD_POLL_EVENTS:
-            // TODO: CHANGE THE SIGNAL TYPE. EVENTS NOW INCLUDE DEVICE DETACHMENT
-            // AND ATTACHMENT
-
             struct event *event = (struct event *) poll_head_deque(event_deque);
 
             buffer[0] = event->event_type;

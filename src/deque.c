@@ -38,29 +38,18 @@ void destroy_deque(struct deque *list) {
 
 }
 
-// void destroy_deque_node_full(struct deque_node *node) {
-//     if (!node) {
-//         return;
-
-//     }
-
-//     free(node->data);
-//     free(node);
-
-// }
-
-// void destory_just_deque_node(struct deque_node *node) {
-//     if (!node) {
-//         return;
-
-//     }
-
-//     free(node);
-
-// }
-
-int add_to_head_deque(struct deque *list, void *data, size_t data_size) {
+// Makes a copy of the data and adds it to the head
+int add_to_head_cpy_deque(
+    struct deque *list,
+    void *data_to_cpy,
+    size_t data_size
+) {
     if (!list) {
+        return -1;
+
+    }
+
+    if (list->size == DEQUE_SIZE_LIMIT) {
         return -1;
 
     }
@@ -80,7 +69,7 @@ int add_to_head_deque(struct deque *list, void *data, size_t data_size) {
 
     }
 
-    memcpy(data_copy, data, data_size);
+    memcpy(data_copy, data_to_cpy, data_size);
 
     new_node->data = data_copy;
 
@@ -95,6 +84,31 @@ int add_to_head_deque(struct deque *list, void *data, size_t data_size) {
 
     }
     
+    list->head = new_node;
+
+    list->size++;
+
+    return 0;
+
+}
+
+int add_to_head_no_cpy_deque(struct deque *list, void *data) {
+    if (!list) {
+        return -1;
+
+    }
+
+    if (list->size == DEQUE_SIZE_LIMIT) {
+        return -1;
+
+    }
+
+    struct deque_node *new_node = calloc(1, sizeof(struct deque_node));
+    
+    new_node->data = data;
+    new_node->next = list->head;
+    new_node->prev = NULL;
+
     list->head = new_node;
 
     list->size++;
@@ -134,9 +148,19 @@ void *poll_head_deque(struct deque *list) {
 
 }
 
-int add_to_tail_deque(struct deque *list, void *data, size_t data_size) {
+// Makes a copy of data and adds the copy to the tail
+int add_to_tail_cpy_deque(
+    struct deque *list,
+    void *data_to_cpy,
+    size_t data_size
+) {
     if (!list) {
         return -1;
+
+    }
+
+    if (list->size == DEQUE_SIZE_LIMIT) {
+    return -1;
 
     }
 
@@ -155,7 +179,7 @@ int add_to_tail_deque(struct deque *list, void *data, size_t data_size) {
 
     }
 
-    memcpy(data_copy, data, data_size);
+    memcpy(data_copy, data_to_cpy, data_size);
 
     new_node->data = data_copy;
     
@@ -170,6 +194,37 @@ int add_to_tail_deque(struct deque *list, void *data, size_t data_size) {
 
     }
 
+    list->tail = new_node;
+
+    list->size++;
+
+    return 0;
+
+}
+
+// Adds the pointer to the deque tail without copying the contents
+int add_to_tail_no_cpy_deque(struct deque *list, void *data) {
+    if (!list) {
+        return -1;
+
+    }
+
+    if (list->size == DEQUE_SIZE_LIMIT) {
+        return -1;
+
+    }
+
+    struct deque_node *new_node = calloc(1, sizeof(struct deque_node));
+
+    if (!new_node) {
+        return -1;
+
+    }
+
+    new_node->data = data;
+    new_node->prev = list->tail;
+    new_node->next = NULL;
+    
     list->tail = new_node;
 
     list->size++;

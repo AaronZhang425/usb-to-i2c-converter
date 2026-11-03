@@ -3,37 +3,7 @@
 
 #include "event.h"
 
-struct event *new_event_from_raw(
-    uint8_t event_data_type,
-    uint64_t raw_data,
-    size_t event_data_size
-) {
-    struct event *new_event = calloc(1, sizeof(struct event));
-
-    if (!new_event) {
-        return NULL;
-
-    }
-
-    void *event_data = calloc(1, event_data_size);
-
-    if (!event_data) {
-        free(new_event);
-        return NULL;
-
-    }
-
-    memcpy(event_data, &raw_data, event_data_size);
-
-    new_event->event_data = event_data;
-    new_event->event_type = event_data_type;
-    new_event->event_data_size = event_data_size;
-
-    return new_event;
-
-}
-
-struct event *new_event_from_ptr(
+struct event *new_event(
     uint8_t event_data_type,
     void *data_ptr,
     size_t event_data_size

@@ -75,7 +75,6 @@ int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descr
         return -1;
 
     }
-
     
     *device_descriptor = malloc(sizeof(tusb_desc_device_t));
     
@@ -123,29 +122,33 @@ void tuh_mount_cb(uint8_t dev_addr) {
         .event_data_size = sizeof(uint8_t)
     };
 
+    struct event *new_usb_device = new_event(
+        NEW_USB_ADDR,
+        &dev_addr,
+        1 // The device address is 1 byte long
+    );
+
     // Add the event to the head of the deque to be processed immediately
-    add_to_head_deque(event_deque, &new_usb_device, sizeof(struct event));
+    add_to_head_no_cpy_deque(event_deque, &new_usb_device);
 
     // Increment the number of devices connected
     usb_devices_connected++;
 
 }
 
-void tuh_unmount_cb(uint8_t dev_addr) {
-    // tusb_desc_device_t *device_descriptor = device_descriptors[dev_addr - 1]; 
-    
+void tuh_unmount_cb(uint8_t dev_addr) {    
     device_addresses[dev_addr - 1] = 0;
 
-    // TODO: HANDLE SETTING EVENT DATA TO A SIMPLE NUMBER RATHER THAN A POINTER
-    struct event release_addr_event = {
-        .event_data_size = sizeof(uint8_t),
-        .event_data = dev_addr,
-        .event_type = USB_ADDR_RELEASE_EVENT
-    };
+    // Allocate some memory for the event
+    struct event *release_addr_event = new_event(
+        USB_ADDR_RELEASE_EVENT,
+        &dev_addr,
+        1 // Device addresses are a single byte    
+    );
 
     // If a device disconnects, handling the event is not as urgent as when 
     // a device connects. Place the event at the end of the deque
-    add_to_tail_deque(event_deque, &release_addr_event, sizeof(struct event));
+    add_to_tail_no_cpy_deque(event_deque, &release_addr_event);
 
     usb_devices_connected--;
 
