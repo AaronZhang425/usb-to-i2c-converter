@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <string.h>
 #include <pico/stdlib.h>
 #include <tusb.h>
 
@@ -44,60 +43,9 @@ static void mouse_handler(
     const hid_mouse_report_t* report,
     uint16_t len    
 ) {
-    struct event mouse_event = {
-        .event_data = (void *) report,
-        .event_type = USB_MOUSE_EVENT,
-        .event_data_size = len
-    };
+    struct event *mouse_event = new_event_cpy(USB_MOUSE_EVENT, &report, len);
 
-    // queue_add_by_event(event_queue, mouse_event);
-    add_to_tail_deque(event_deque, &mouse_event, sizeof(mouse_event));
-
-}
-
-
-// Frees a device descriptor
-void destroy_device_descriptor(tusb_desc_device_t *descriptor) {
-    free(descriptor);
-
-}
-
-static void get_device_descriptor_cb(tuh_xfer_t *xfer) {
-    if (xfer->result != XFER_RESULT_SUCCESS) {
-        printf("Could not get device descriptor");
-
-    }
-
-}
-
-int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descriptor) {
-    if (!device_descriptor) {
-        return -1;
-
-    }
-    
-    *device_descriptor = malloc(sizeof(tusb_desc_device_t));
-    
-    if (!(*device_descriptor)) {
-        return -1;        
-
-    }
-
-    bool status = tuh_descriptor_get_device(
-        device_addr,
-        device_descriptor,
-        USB_DESCRIPTOR_LENGTH,
-        get_device_descriptor_cb,
-        0
-    );
-
-    if (!status) {
-        free(*device_descriptor);
-        return -1;
-
-    }
-
-    return 0;
+    add_to_tail_no_cpy_deque(event_deque, &mouse_event);
 
 }
 
@@ -114,15 +62,8 @@ void tuh_mount_cb(uint8_t dev_addr) {
     // Map device addresses to an index in the array of USB devices
     // Subtract 1 so that index 0 is also used
     device_addresses[dev_addr - 1] = dev_addr;
-    
-    // Create an event
-    struct event new_usb_device = {
-        .event_data_size = NEW_USB_ADDR,
-        .event_data = dev_addr,
-        .event_data_size = sizeof(uint8_t)
-    };
 
-    struct event *new_usb_device = new_event(
+    struct event *new_usb_device = new_event_cpy(
         NEW_USB_ADDR,
         &dev_addr,
         1 // The device address is 1 byte long
@@ -140,7 +81,7 @@ void tuh_unmount_cb(uint8_t dev_addr) {
     device_addresses[dev_addr - 1] = 0;
 
     // Allocate some memory for the event
-    struct event *release_addr_event = new_event(
+    struct event *release_addr_event = new_event_cpy(
         USB_ADDR_RELEASE_EVENT,
         &dev_addr,
         1 // Device addresses are a single byte    

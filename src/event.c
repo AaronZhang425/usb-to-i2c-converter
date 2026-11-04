@@ -1,9 +1,10 @@
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "event.h"
 
-struct event *new_event(
+struct event *new_event_cpy(
     uint8_t event_data_type,
     void *data_ptr,
     size_t event_data_size

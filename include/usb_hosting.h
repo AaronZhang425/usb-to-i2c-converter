@@ -1,8 +1,6 @@
 #ifndef USB_HOSTING_H
 #define USB_HOSTING_H
 
-#define USB_DESCRIPTOR_LENGTH 18
-
 // extern tusb_desc_device_t *device_descriptors[];
 extern uint8_t device_addresses[];
 extern uint8_t usb_devices_connected; 
