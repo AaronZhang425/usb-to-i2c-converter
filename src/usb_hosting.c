@@ -43,7 +43,7 @@ static void mouse_handler(
     const hid_mouse_report_t* report,
     uint16_t len    
 ) {
-    struct event *mouse_event = new_event_cpy(USB_MOUSE_EVENT, &report, len);
+    struct event *mouse_event = new_event_cpy(USB_MOUSE_EVENT, report, len);
 
     add_to_tail_no_cpy_deque(event_deque, &mouse_event);
 
