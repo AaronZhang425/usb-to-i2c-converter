@@ -36,7 +36,8 @@
 #include "tusb_config.h"
 #include "usb_hosting.h"
 #include "deque.h"
-#include "event.h"
+#include "usb_event.h"
+#include "usb_descriptor_getters.h"
 
 // Represents the command from the host
 uint8_t host_command;
@@ -46,59 +47,93 @@ uint8_t hcmd_arg;
 
 static uint8_t buffer[DEFAULT_BUFFER_SIZE];
 
-static void write_to_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
-    host_command = i2c_read_byte_raw(i2c);
-    hcmd_arg = i2c_read_byte_raw(i2c);
+static void new_host_handler() {
 
 }
 
-static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
+static void get_usb_dev_desc_handler() {
+
+}
+
+static void get_usb_config_desc_handler() {
+
+}
+
+static void get_usb_interface_desc_handler() {
+
+}
+
+static void get_usb_endpoint_desc_handler() {
+
+}
+
+static void get_max_usb_dev_handler() {
+
+}
+
+static void poll_usb_event_handler() {
+
+}
+
+static void read_from_slave_handler(i2c_inst_t *i2c) {
     uint16_t used_buffer_size = 0;
 
     switch (host_command) {
         case HCMD_NEW_I2C_HOST:
-            buffer[0] = NEW_USB_ADDR;
-            used_buffer_size = 1;
+            new_host_handler();
+            // buffer[0] = NEW_USB_ADDR;
+            // used_buffer_size = 1;
         
-            for (uint8_t index = 0; index < usb_devices_connected; index++) {
-                buffer[1 + index ] = device_addresses[index];
-                used_buffer_size++;
+            // for (uint8_t index = 0; index < usb_devices_connected; index++) {
+            //     buffer[1 + index ] = device_addresses[index];
+            //     used_buffer_size++;
 
-            }
+            // }
 
             break;
 
         case HCMD_GET_USB_DEV_DESC:
+            get_usb_dev_desc_handler();
+
             // buffer[0] = MAX_USB_DEVICES_EVENT;
             // buffer[1] = CFG_TUH_DEVICE_MAX;
             // used_buffer_size = 2;
 
+            // tusb_desc_device_t *dev_desc;
+            // get_dev_desc_sync(hcmd_arg, &dev_desc);
+
+
             break;
 
         case HCMD_GET_USB_CONFIG_DESC:
+            get_usb_config_desc_handler();
             break;
 
         case HCMD_GET_USB_INTERFACE_DESC:
+            get_usb_interface_desc_handler();
             break;
 
         case HCMD_GET_USB_ENDPOINT_DESC:
+            get_usb_endpoint_desc_handler();
             break;
 
         case HCMD_GET_MAX_USB_DEV:
+            get_max_usb_dev_handler();
             break;
 
         case HCMD_POLL_EVENTS:
-            struct event *event = (struct event *) poll_head_deque(event_deque);
+            poll_usb_event_handler();
+            // struct usb_event *event = (struct usb_event *) poll_head_deque(event_deque);
 
-            buffer[0] = event->event_type;
+            // buffer[0] = event->event_type;
 
-            memcpy(
-                &buffer[1],
-                event->event_data,
-                event->event_data_size
-            );
+            // memcpy(
+            //     &buffer[1],
+            //     event->event_data,
+            //     event->event_data_size
+            // );
 
-            used_buffer_size = 1 + event->event_data_size;
+            // used_buffer_size = 1 + event->event_data_size;
 
             break;
 
@@ -112,14 +147,21 @@ static void read_from_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t *event) {
 
 }
 
+static void write_to_slave_handler(i2c_inst_t *i2c) {
+    host_command = i2c_read_byte_raw(i2c);
+    hcmd_arg = i2c_read_byte_raw(i2c);
+
+}
+
+
 static void i2c_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t event) {
     switch (event) {
         case I2C_SLAVE_RECEIVE:
-            read_from_slave_handler(i2c, &event);
+            read_from_slave_handler(i2c);
             break;
         
         case I2C_SLAVE_REQUEST:
-            write_to_slave_handler(i2c, &event);
+            write_to_slave_handler(i2c);
             break;
 
         case I2C_SLAVE_FINISH:

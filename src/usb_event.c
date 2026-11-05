@@ -2,14 +2,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "event.h"
+#include "usb_event.h"
 
-struct event *new_event_cpy(
-    uint8_t event_data_type,
-    void *data_ptr,
-    size_t event_data_size
+struct usb_event *new_event_cpy(
+    const uint8_t event_data_type,
+    const void *data_ptr,
+    const size_t event_data_size
 ) {
-    struct event *new_event = calloc(1, sizeof(struct event));
+    struct usb_event *new_event = calloc(1, sizeof(struct usb_event));
 
     if (!new_event) {
         return NULL;
@@ -34,7 +34,7 @@ struct event *new_event_cpy(
 
 }
 
-void destroy_event(struct event *event) {
+void destroy_usb_event(struct usb_event *event) {
     free(event->event_data);
     free(event);
 

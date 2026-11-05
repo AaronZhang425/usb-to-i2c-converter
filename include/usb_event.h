@@ -3,16 +3,16 @@
 #define MAX_USB_DEVICES_EVENT 2
 #define USB_MOUSE_EVENT 3
 
-struct event {
+struct usb_event {
     size_t event_data_size;
     void* event_data;
     uint8_t event_type;
 };
 
-struct event *new_event_cpy(
-    uint8_t event_data_type,
-    void *data_ptr,
-    size_t event_data_size
+struct usb_event *new_event_cpy(
+    const uint8_t event_data_type,
+    const void *data_ptr,
+    const size_t event_data_size
 );
 
-void destroy_event(struct event *event);
+void destroy_usb_event(struct usb_event *event);

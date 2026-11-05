@@ -4,7 +4,7 @@
 
 #include "usb_hosting.h"
 #include "tusb_config.h"
-#include "event.h"
+#include "usb_event.h"
 #include "deque.h"
 
 // tusb_desc_device_t *device_descriptors[CFG_TUH_DEVICE_MAX];
@@ -43,9 +43,9 @@ static void mouse_handler(
     const hid_mouse_report_t* report,
     uint16_t len    
 ) {
-    struct event *mouse_event = new_event_cpy(USB_MOUSE_EVENT, report, len);
+    struct usb_event *mouse_event = new_event_cpy(USB_MOUSE_EVENT, report, len);
 
-    add_to_tail_no_cpy_deque(event_deque, &mouse_event);
+    add_to_tail_no_cpy_deque(event_deque, mouse_event);
 
 }
 
@@ -63,7 +63,7 @@ void tuh_mount_cb(uint8_t dev_addr) {
     // Subtract 1 so that index 0 is also used
     device_addresses[dev_addr - 1] = dev_addr;
 
-    struct event *new_usb_device = new_event_cpy(
+    struct usb_event *new_usb_device = new_event_cpy(
         NEW_USB_ADDR,
         &dev_addr,
         1 // The device address is 1 byte long
@@ -81,7 +81,7 @@ void tuh_unmount_cb(uint8_t dev_addr) {
     device_addresses[dev_addr - 1] = 0;
 
     // Allocate some memory for the event
-    struct event *release_addr_event = new_event_cpy(
+    struct usb_event *release_addr_event = new_event_cpy(
         USB_ADDR_RELEASE_EVENT,
         &dev_addr,
         1 // Device addresses are a single byte    
@@ -89,7 +89,7 @@ void tuh_unmount_cb(uint8_t dev_addr) {
 
     // If a device disconnects, handling the event is not as urgent as when 
     // a device connects. Place the event at the end of the deque
-    add_to_tail_no_cpy_deque(event_deque, &release_addr_event);
+    add_to_tail_no_cpy_deque(event_deque, release_addr_event);
 
     usb_devices_connected--;
 

@@ -5,12 +5,12 @@
 #include "usb_descriptor_getters.h"
 
 // Frees a device descriptor
-void destroy_device_descriptor(tusb_desc_device_t *descriptor) {
-    free(descriptor);
+void destroy_dev_desc(tusb_desc_device_t *dev_desc) {
+    free(dev_desc);
 
 }
 
-static void get_device_descriptor_cb(tuh_xfer_t *xfer) {
+static void get_dev_desc_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Could not get device descriptor");
 
@@ -18,33 +18,61 @@ static void get_device_descriptor_cb(tuh_xfer_t *xfer) {
 
 }
 
-int get_device_descriptor(uint8_t device_addr, tusb_desc_device_t **device_descriptor) {
-    if (!device_descriptor) {
+int get_dev_desc_async(uint8_t dev_addr, tusb_desc_device_t **dev_desc) {
+    if (!dev_desc) {
         return -1;
 
     }
     
-    *device_descriptor = malloc(sizeof(tusb_desc_device_t));
+    *dev_desc = malloc(sizeof(tusb_desc_device_t));
     
-    if (!(*device_descriptor)) {
+    if (!(*dev_desc)) {
         return -1;        
 
     }
 
     bool status = tuh_descriptor_get_device(
-        device_addr,
-        device_descriptor,
+        dev_addr,
+        dev_desc,
         USB_DEV_DESC_LENGTH,
-        get_device_descriptor_cb,
+        get_dev_desc_cb,
         0
     );
 
     if (!status) {
-        free(*device_descriptor);
+        free(*dev_desc);
         return -1;
 
     }
 
+    return 0;
+
+}
+
+int get_dev_desc_sync(uint8_t dev_addr, tusb_desc_device_t **dev_desc) {
+    if (!dev_desc) {
+        return -1;
+
+    }
+    
+    *dev_desc = calloc(1, sizeof(tusb_desc_device_t));
+    
+    if (!(*dev_desc)) {
+        return -1;
+
+    }
+
+    if (
+        tuh_descriptor_get_device_sync(
+            dev_addr,
+            *dev_desc,
+            sizeof(tusb_desc_device_t)
+        ) != XFER_RESULT_SUCCESS
+    ) {
+        return -1;
+
+    }
+    
     return 0;
 
 }
