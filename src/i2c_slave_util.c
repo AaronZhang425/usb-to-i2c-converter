@@ -49,50 +49,70 @@ static uint8_t i2c_buffer[DEFAULT_BUFFER_SIZE];
 
 static int new_host_handler(
     uint8_t *buffer,
-    const uint8_t max_length
+    const uint8_t max_bytes_written
 ) {
-    
+    // The number of bytes written will match the number of addresses written
+    uint8_t bytes_written = 0;
+
+    for (
+        uint8_t index = 0;
+        (
+            index < CFG_TUH_DEVICE_MAX 
+            && bytes_written < num_usb_connected
+            && bytes_written < max_bytes_written
+        );
+        index++
+    ) {
+        if (device_addresses[index]) {
+            buffer[bytes_written] = device_addresses[index];
+            bytes_written++;
+
+        }
+
+    }
+
+    return bytes_written;
 
 }
 
 static int get_usb_dev_desc_handler(
     uint8_t *buffer,
-    const uint8_t max_length
+    const uint8_t max_bytes_written
 ) {
 
 }
 
 static int get_usb_config_desc_handler(
     uint8_t *buffer,
-    const uint8_t max_length
+    const uint8_t max_bytes_written
 ) {
 
 }
 
 static int get_usb_interface_desc_handler(
     uint8_t *buffer,
-    const uint8_t max_length
+    const uint8_t max_bytes_written
 ) {
 
 }
 
 static int get_usb_endpoint_desc_handler(
     uint8_t *buffer,
-    const uint8_t max_length
+    const uint8_t max_bytes_written
 ) {
 
 }
 
 static int get_max_usb_dev_handler(
     uint8_t *buffer,
-    const uint8_t max_length
+    const uint8_t max_bytes_written
 ) {
 
 }
 
 static int poll_usb_event_handler(
     uint8_t *buffer,
-    const uint8_t max_length
+    const uint8_t max_bytes_written
 ) {
 
 }
@@ -105,7 +125,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
         case HCMD_NEW_I2C_HOST:
             used_buffer_size += new_host_handler(
                 &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE
+                DEFAULT_BUFFER_SIZE - used_buffer_size
             );
             
             // buffer[0] = NEW_USB_ADDR;
@@ -122,7 +142,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
         case HCMD_GET_USB_DEV_DESC:
             used_buffer_size += get_usb_dev_desc_handler(
                 &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE
+                DEFAULT_BUFFER_SIZE - used_buffer_size
             );
 
             // buffer[0] = MAX_USB_DEVICES_EVENT;
@@ -138,7 +158,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
         case HCMD_GET_USB_CONFIG_DESC:
             used_buffer_size += get_usb_config_desc_handler(
                 &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE
+                DEFAULT_BUFFER_SIZE - used_buffer_size
             );
 
             break;
@@ -146,7 +166,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
         case HCMD_GET_USB_INTERFACE_DESC:
             used_buffer_size += get_usb_interface_desc_handler(
                 &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE
+                DEFAULT_BUFFER_SIZE - used_buffer_size
             );
 
             break;
@@ -154,7 +174,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
         case HCMD_GET_USB_ENDPOINT_DESC:
             used_buffer_size += get_usb_endpoint_desc_handler(
                 &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE
+                DEFAULT_BUFFER_SIZE - used_buffer_size
             );
 
             break;
@@ -162,7 +182,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
         case HCMD_GET_MAX_USB_DEV:
             used_buffer_size += get_max_usb_dev_handler(
                 &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE
+                DEFAULT_BUFFER_SIZE - used_buffer_size
             );
 
             break;
@@ -170,7 +190,7 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
         case HCMD_POLL_EVENTS:
             used_buffer_size += poll_usb_event_handler(
                 &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE
+                DEFAULT_BUFFER_SIZE - used_buffer_size
             );
 
             // struct usb_event *event = (struct usb_event *) poll_head_deque(event_deque);

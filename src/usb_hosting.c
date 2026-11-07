@@ -9,7 +9,7 @@
 
 // tusb_desc_device_t *device_descriptors[CFG_TUH_DEVICE_MAX];
 uint8_t device_addresses[CFG_TUH_DEVICE_MAX];
-uint8_t usb_devices_connected = 0;
+uint8_t num_usb_connected = 0;
 
 // struct event_queue *event_queue;
 struct deque *event_deque;
@@ -73,7 +73,7 @@ void tuh_mount_cb(uint8_t dev_addr) {
     add_to_head_no_cpy_deque(event_deque, &new_usb_device);
 
     // Increment the number of devices connected
-    usb_devices_connected++;
+    num_usb_connected++;
 
 }
 
@@ -91,7 +91,7 @@ void tuh_unmount_cb(uint8_t dev_addr) {
     // a device connects. Place the event at the end of the deque
     add_to_tail_no_cpy_deque(event_deque, release_addr_event);
 
-    usb_devices_connected--;
+    num_usb_connected--;
 
 }
 

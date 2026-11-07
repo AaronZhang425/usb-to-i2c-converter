@@ -2,7 +2,7 @@
 #define USB_HOSTING_H
 
 extern uint8_t device_addresses[];
-extern uint8_t usb_devices_connected; 
+extern uint8_t num_usb_connected; 
 
 extern struct deque *event_deque;
 
