@@ -115,8 +115,42 @@ static void default_config_desc_cb(tuh_xfer_t *xfer) {
 int get_config_desc_async(
     uint8_t dev_addr,
     tusb_desc_configuration_t **config_desc,
+    uint8_t config_index,
     void (*callback)(tusb_desc_configuration_t *xfer)
 ) {
+
+    if (!config_desc) {
+        return -1;
+
+    }
+
+    if (!callback) {
+        callback = default_dev_desc_cb;
+
+    }
+
+    *config_desc = malloc(sizeof(tusb_desc_configuration_t));
+    
+    if (!(*config_desc)) {
+        return -1;        
+
+    }
+
+    bool status = tuh_descriptor_get_configuration(
+        dev_addr,
+        config_index,
+        *config_desc,
+        USB_DEV_DESC_LENGTH,
+        callback,
+        0
+    );
+
+    if (!status) {
+        free(*config_desc);
+        return -1;
+
+    }    
+
     return 0;
 
 }
