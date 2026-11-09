@@ -26,10 +26,10 @@ static void default_dev_desc_cb(tuh_xfer_t *xfer) {
 
 int get_dev_desc_async(
     uint8_t dev_addr,
-    tusb_desc_device_t **dev_desc,
+    tusb_desc_device_t **dev_desc_buffer,
     void (*callback)(tuh_xfer_t *xfer)
 ) {
-    if (!dev_desc) {
+    if (!dev_desc_buffer) {
         return -1;
 
     }
@@ -39,23 +39,23 @@ int get_dev_desc_async(
 
     }
 
-    *dev_desc = malloc(sizeof(tusb_desc_device_t));
+    *dev_desc_buffer = malloc(sizeof(tusb_desc_device_t));
     
-    if (!(*dev_desc)) {
+    if (!(*dev_desc_buffer)) {
         return -1;        
 
     }
 
     bool status = tuh_descriptor_get_device(
         dev_addr,
-        dev_desc,
+        *dev_desc_buffer,
         USB_DEV_DESC_LENGTH,
         callback,
         0
     );
 
     if (!status) {
-        free(*dev_desc);
+        free(*dev_desc_buffer);
         return -1;
 
     }
@@ -64,15 +64,15 @@ int get_dev_desc_async(
 
 }
 
-int get_dev_desc_sync(uint8_t dev_addr, tusb_desc_device_t **dev_desc) {
-    if (!dev_desc) {
+int get_dev_desc_sync(uint8_t dev_addr, tusb_desc_device_t **dev_desc_buffer) {
+    if (!dev_desc_buffer) {
         return -1;
 
     }
     
-    *dev_desc = calloc(1, sizeof(tusb_desc_device_t));
+    *dev_desc_buffer = calloc(1, sizeof(tusb_desc_device_t));
     
-    if (!(*dev_desc)) {
+    if (!(*dev_desc_buffer)) {
         return -1;
 
     }
@@ -80,7 +80,7 @@ int get_dev_desc_sync(uint8_t dev_addr, tusb_desc_device_t **dev_desc) {
     if (
         tuh_descriptor_get_device_sync(
             dev_addr,
-            *dev_desc,
+            *dev_desc_buffer,
             sizeof(tusb_desc_device_t)
         ) != XFER_RESULT_SUCCESS
     ) {
@@ -114,12 +114,12 @@ static void default_config_desc_cb(tuh_xfer_t *xfer) {
 
 int get_config_desc_async(
     uint8_t dev_addr,
-    tusb_desc_configuration_t **config_desc,
+    tusb_desc_configuration_t **config_desc_buffer,
     uint8_t config_index,
     void (*callback)(tusb_desc_configuration_t *xfer)
 ) {
 
-    if (!config_desc) {
+    if (!config_desc_buffer) {
         return -1;
 
     }
@@ -129,9 +129,9 @@ int get_config_desc_async(
 
     }
 
-    *config_desc = malloc(sizeof(tusb_desc_configuration_t));
+    *config_desc_buffer = malloc(sizeof(tusb_desc_configuration_t));
     
-    if (!(*config_desc)) {
+    if (!(*config_desc_buffer)) {
         return -1;        
 
     }
@@ -139,14 +139,14 @@ int get_config_desc_async(
     bool status = tuh_descriptor_get_configuration(
         dev_addr,
         config_index,
-        *config_desc,
+        *config_desc_buffer,
         USB_DEV_DESC_LENGTH,
         callback,
         0
     );
 
     if (!status) {
-        free(*config_desc);
+        free(*config_desc_buffer);
         return -1;
 
     }    
@@ -157,8 +157,34 @@ int get_config_desc_async(
 
 int get_config_desc_sync(
     uint8_t dev_addr,
-    tusb_desc_configuration_t **config_desc
+    tusb_desc_configuration_t **config_desc_buffer,
+    uint8_t index
 ) {
+
+    if (!config_desc_buffer) {
+        return -1;
+
+    }
+    
+    *config_desc_buffer = calloc(1, sizeof(tusb_desc_configuration_t));
+    
+    if (!(*config_desc_buffer)) {
+        return -1;
+
+    }
+
+    if (
+        tuh_descriptor_get_configuration_sync(
+            dev_addr,
+            index,
+            *config_desc_buffer,
+            sizeof(tusb_desc_configuration_t)
+        ) != XFER_RESULT_SUCCESS
+    ) {
+        return -1;
+
+    }
+
     return 0;
 
 }
