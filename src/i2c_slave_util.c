@@ -89,20 +89,6 @@ static int get_usb_config_desc_handler(
 
 }
 
-static int get_usb_interface_desc_handler(
-    uint8_t *buffer,
-    const uint8_t max_bytes_written
-) {
-
-}
-
-static int get_usb_endpoint_desc_handler(
-    uint8_t *buffer,
-    const uint8_t max_bytes_written
-) {
-
-}
-
 static int get_max_usb_dev_handler(
     uint8_t *buffer,
     const uint8_t max_bytes_written
@@ -157,22 +143,6 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
 
         case HCMD_GET_USB_CONFIG_DESC:
             used_buffer_size += get_usb_config_desc_handler(
-                &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE - used_buffer_size
-            );
-
-            break;
-
-        case HCMD_GET_USB_INTERFACE_DESC:
-            used_buffer_size += get_usb_interface_desc_handler(
-                &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE - used_buffer_size
-            );
-
-            break;
-
-        case HCMD_GET_USB_ENDPOINT_DESC:
-            used_buffer_size += get_usb_endpoint_desc_handler(
                 &i2c_buffer[used_buffer_size],
                 DEFAULT_BUFFER_SIZE - used_buffer_size
             );

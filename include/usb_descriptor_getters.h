@@ -6,6 +6,12 @@
 #define USB_INTERFACE_DESC_LENGTH 9
 #define UBS_ENDPOINT_DESC_LENGTH 7
 
+#define USB_DEV_DESC_TYPE 0x01
+#define USB_CONFIG_DESC_TYPE 0x02
+#define USB_STRING_DESC_TYPE 0x03
+#define USB_INTERFACE_DESC_TYPE 0x04
+#define USB_ENDPOINT_DESC_TYPE 0x05
+
 /******************************************
 
 DEVICE DESCRIPTOR FUNCTIONS
@@ -26,16 +32,5 @@ CONFIGURATION DESCRIPTOR FUNCTIONS
 
 ******************************************/
 
-/******************************************
-
-INTERFACE DESCRIPTOR FUNCTIONS
-
-******************************************/
-
-/******************************************
-
-ENDPOINT DESCRIPTOR FUNCTIONS
-
-******************************************/
 
 #endif
