@@ -49,10 +49,12 @@ int add_to_head_cpy_deque(
 
     }
 
+#ifdef DEQUE_SIZE_LIMIT
     if (list->size == DEQUE_SIZE_LIMIT) {
         return -1;
 
     }
+#endif
 
     struct deque_node *new_node = calloc(1, sizeof(struct deque_node));
 
@@ -98,10 +100,12 @@ int add_to_head_no_cpy_deque(struct deque *list, void *data) {
 
     }
 
+#ifdef DEQUE_SIZE_LIMIT
     if (list->size == DEQUE_SIZE_LIMIT) {
         return -1;
 
     }
+#endif
 
     struct deque_node *new_node = calloc(1, sizeof(struct deque_node));
     
@@ -159,10 +163,12 @@ int add_to_tail_cpy_deque(
 
     }
 
+#ifdef DEQUE_SIZE_LIMIT
     if (list->size == DEQUE_SIZE_LIMIT) {
     return -1;
 
     }
+#endif
 
     struct deque_node *new_node = calloc(1, sizeof(struct deque_node));
 
@@ -209,10 +215,12 @@ int add_to_tail_no_cpy_deque(struct deque *list, void *data) {
 
     }
 
+#ifdef DEQUE_SIZE_LIMIT
     if (list->size == DEQUE_SIZE_LIMIT) {
         return -1;
 
     }
+#endif
 
     struct deque_node *new_node = calloc(1, sizeof(struct deque_node));
 

@@ -41,7 +41,7 @@ add_executable(usb_to_i2c
         src/usb_hosting.c
         src/deque.c
         src/usb_event.c
-        src/usb_descriptor_getters.c
+        src/usb_descriptor_util.c
 )
 
 pico_set_program_name(usb_to_i2c "usb_to_i2c")

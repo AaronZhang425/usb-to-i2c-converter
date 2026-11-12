@@ -37,7 +37,7 @@
 #include "usb_hosting.h"
 #include "deque.h"
 #include "usb_event.h"
-#include "usb_descriptor_getters.h"
+#include "usb_descriptor_util.h"
 
 // Represents the command from the host
 uint8_t host_command;

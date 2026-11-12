@@ -2,7 +2,7 @@
 #include <pico/stdlib.h>
 #include <tusb.h>
 
-#include "usb_descriptor_getters.h"
+#include "usb_descriptor_util.h"
 
 /******************************************
 
@@ -112,14 +112,14 @@ static void default_config_desc_cb(tuh_xfer_t *xfer) {
 
 }
 
-int get_config_desc_async(
+int get_config_desc_header_async(
     uint8_t dev_addr,
-    tusb_desc_configuration_t **config_desc_buffer,
+    tusb_desc_configuration_t **config_desc_header_buffer,
     uint8_t config_index,
     void (*callback)(tuh_xfer_t *xfer)
 ) {
 
-    if (!config_desc_buffer) {
+    if (!config_desc_header_buffer) {
         return -1;
 
     }
@@ -129,9 +129,9 @@ int get_config_desc_async(
 
     }
 
-    *config_desc_buffer = malloc(sizeof(tusb_desc_configuration_t));
+    *config_desc_header_buffer = malloc(sizeof(tusb_desc_configuration_t));
     
-    if (!(*config_desc_buffer)) {
+    if (!(*config_desc_header_buffer)) {
         return -1;        
 
     }
@@ -139,14 +139,14 @@ int get_config_desc_async(
     bool status = tuh_descriptor_get_configuration(
         dev_addr,
         config_index,
-        *config_desc_buffer,
-        USB_DEV_DESC_LENGTH,
+        *config_desc_header_buffer,
+        sizeof(tusb_desc_configuration_t),
         callback,
         0
     );
 
     if (!status) {
-        free(*config_desc_buffer);
+        free(*config_desc_header_buffer);
         return -1;
 
     }    
@@ -155,7 +155,50 @@ int get_config_desc_async(
 
 }
 
-int get_config_desc_sync(
+int get_full_config_desc_hierarchy_block_async(
+    uint8_t dev_addr,
+    uint8_t **config_buffer,
+    uint16_t buffer_size,
+    uint8_t config_index,
+    void (*callback)(tuh_xfer_t xfer)
+) {
+    if (!config_buffer) {
+        return -1;
+
+    }
+    
+    *config_buffer = calloc(1, buffer_size);
+    
+    if (!(*config_buffer)) {
+        return 0;
+
+    }
+
+    if (!callback) {
+        callback = default_config_desc_cb;
+
+    }
+
+    bool status = tuh_descriptor_get_configuration(
+        dev_addr,
+        config_index,
+        *config_buffer,
+        buffer_size,
+        callback,
+        0
+    );    
+
+    if (!status) {
+        free(*config_buffer);
+        return -1;
+
+    }
+
+    return 0;
+
+}
+
+int get_config_desc_header_sync(
     uint8_t dev_addr,
     tusb_desc_configuration_t **config_desc_buffer,
     uint8_t index
@@ -185,6 +228,11 @@ int get_config_desc_sync(
 
     }
 
+    return 0;
+
+}
+
+int get_config_desc_hierarchy_block_sync() {
     return 0;
 
 }

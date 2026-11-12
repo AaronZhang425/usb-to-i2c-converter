@@ -12,6 +12,8 @@
 #define USB_INTERFACE_DESC_TYPE 0x04
 #define USB_ENDPOINT_DESC_TYPE 0x05
 
+// #define CONFIG_BUFFER_SIZE
+
 /******************************************
 
 DEVICE DESCRIPTOR FUNCTIONS
