@@ -4,6 +4,10 @@
 
 #include "usb_descriptor_util.h"
 
+struct config_request_description {
+
+};
+
 /******************************************
 
 DEVICE DESCRIPTOR FUNCTIONS
@@ -155,6 +159,16 @@ int get_config_desc_header_async(
 
 }
 
+static void get_full_config_desc_cb(tuh_xfer_t *xfer) {
+    if (xfer->result != XFER_RESULT_SUCCESS) {
+        printf("Could not get configuration descriptor");
+
+    }
+    
+    
+
+}
+
 int get_full_config_desc_hierarchy_block_async(
     uint8_t dev_addr,
     uint8_t **config_buffer,
@@ -162,37 +176,25 @@ int get_full_config_desc_hierarchy_block_async(
     uint8_t config_index,
     void (*callback)(tuh_xfer_t xfer)
 ) {
-    if (!config_buffer) {
+   
+    tusb_desc_configuration_t *config_desc_header = calloc(
+        1,
+        sizeof(tusb_desc_configuration_t)
+    );
+
+    if (!config_desc_header) {
         return -1;
-
-    }
-    
-    *config_buffer = calloc(1, buffer_size);
-    
-    if (!(*config_buffer)) {
-        return 0;
-
-    }
-
-    if (!callback) {
-        callback = default_config_desc_cb;
 
     }
 
     bool status = tuh_descriptor_get_configuration(
         dev_addr,
         config_index,
-        *config_buffer,
-        buffer_size,
-        callback,
-        0
-    );    
-
-    if (!status) {
-        free(*config_buffer);
-        return -1;
-
-    }
+        config_desc_header,
+        sizeof(tusb_desc_configuration_t),
+        get_full_config_desc_cb,
+        config_buffer
+    );
 
     return 0;
 
