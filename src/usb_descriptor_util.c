@@ -4,8 +4,9 @@
 
 #include "usb_descriptor_util.h"
 
-struct config_request_description {
-
+struct config_desc_cb_params {
+    uint8_t **buffer;
+    uint8_t config_index;
 };
 
 /******************************************
@@ -172,7 +173,6 @@ static void get_full_config_desc_cb(tuh_xfer_t *xfer) {
 int get_full_config_desc_hierarchy_block_async(
     uint8_t dev_addr,
     uint8_t **config_buffer,
-    uint16_t buffer_size,
     uint8_t config_index,
     void (*callback)(tuh_xfer_t xfer)
 ) {
