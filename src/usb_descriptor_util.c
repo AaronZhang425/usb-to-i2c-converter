@@ -4,9 +4,11 @@
 
 #include "usb_descriptor_util.h"
 
-struct config_desc_cb_params {
-    uint8_t **buffer;
-    uint8_t config_index;
+// Used to pack data needed by callback function when getting the full
+// configuration descriptor block (configuration, interface, endpoint, etc.)
+struct buf_config_tuple {
+    uint8_t *buff_ptr;
+    uint8_t get_config_index;
 };
 
 /******************************************
@@ -120,7 +122,7 @@ static void default_config_desc_cb(tuh_xfer_t *xfer) {
 int get_config_desc_header_async(
     uint8_t dev_addr,
     tusb_desc_configuration_t **config_desc_header_buffer,
-    uint8_t config_index,
+    uint8_t get_config_index,
     void (*callback)(tuh_xfer_t *xfer)
 ) {
 
@@ -143,7 +145,7 @@ int get_config_desc_header_async(
 
     bool status = tuh_descriptor_get_configuration(
         dev_addr,
-        config_index,
+        get_config_index,
         *config_desc_header_buffer,
         sizeof(tusb_desc_configuration_t),
         callback,
@@ -160,40 +162,57 @@ int get_config_desc_header_async(
 
 }
 
-static void get_full_config_desc_cb(tuh_xfer_t *xfer) {
+static void get_full_config_desc_block_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Could not get configuration descriptor");
 
     }
     
+    // The value in the byte before is the get config value, assigned in
+    // get_full_config_desc_block_async(...)
+    uint8_t get_config_index = xfer->buffer[-1]; 
+    tusb_desc_configuration_t *config_desc_header = (
+        (tusb_desc_configuration_t *) xfer->buffer
+    );
+    
+    // Do something
+
+
+    // The buffer defined in get_full_config_desc_block_async(...) points to
+    // get_config_index, not the actual descriptor buffer
+    free((xfer->buffer) - 1);
     
 
 }
 
-int get_full_config_desc_hierarchy_block_async(
+int get_full_config_desc_block_async(
     uint8_t dev_addr,
     uint8_t **config_buffer,
-    uint8_t config_index,
+    uint8_t get_config_index,
     void (*callback)(tuh_xfer_t xfer)
 ) {
-   
-    tusb_desc_configuration_t *config_desc_header = calloc(
+
+    // Contains the descriptor header and the index of the GET_CONFIGURATION
+    // index (different from the SET_CONFIGURATION index)
+    uint8_t *config_desc_header_buf_index_tuple = calloc(
         1,
-        sizeof(tusb_desc_configuration_t)
+        sizeof(tusb_desc_configuration_t) + 1
     );
 
-    if (!config_desc_header) {
+    if (!config_desc_header_buf_index_tuple) {
         return -1;
-
+        
     }
+
+    config_desc_header_buf_index_tuple[0] = get_config_index;
 
     bool status = tuh_descriptor_get_configuration(
         dev_addr,
-        config_index,
-        config_desc_header,
+        get_config_index,
+        config_desc_header_buf_index_tuple + 1,
         sizeof(tusb_desc_configuration_t),
-        get_full_config_desc_cb,
-        config_buffer
+        get_full_config_desc_block_cb,
+        (uintptr_t) config_buffer
     );
 
     return 0;
@@ -234,7 +253,8 @@ int get_config_desc_header_sync(
 
 }
 
-int get_config_desc_hierarchy_block_sync() {
+// TODO: Implement
+int get_config_desc_block_sync() {
     return 0;
 
 }
