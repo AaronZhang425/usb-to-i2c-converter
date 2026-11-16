@@ -162,7 +162,15 @@ int get_config_desc_header_async(
 
 }
 
-static void get_full_config_desc_block_cb(tuh_xfer_t *xfer) {
+static void get_full_config_desc_block_cb_handle_block(tuh_xfer_t *xfer) {
+    if (xfer->result != XFER_RESULT_SUCCESS) {
+        printf("Could not get full configuration descriptor block");
+
+    }
+
+}
+
+static void get_full_config_desc_block_cb_handle_header(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Could not get configuration descriptor");
 
@@ -171,12 +179,23 @@ static void get_full_config_desc_block_cb(tuh_xfer_t *xfer) {
     // The value in the byte before is the get config value, assigned in
     // get_full_config_desc_block_async(...)
     uint8_t get_config_index = xfer->buffer[-1]; 
+    
     tusb_desc_configuration_t *config_desc_header = (
         (tusb_desc_configuration_t *) xfer->buffer
     );
     
-    // Do something
+    uint8_t **full_config_buffer = (uint8_t **) (xfer->user_data);
+    *full_config_buffer = calloc(1, config_desc_header->wTotalLength);
 
+    // Do something
+    bool status = tuh_descriptor_get_configuration(
+        xfer->daddr,
+        get_config_index,
+        *full_config_buffer,
+        sizeof(tusb_desc_configuration_t),
+        get_full_config_desc_block_cb_handle_block,
+        0
+    );    
 
     // The buffer defined in get_full_config_desc_block_async(...) points to
     // get_config_index, not the actual descriptor buffer
@@ -211,7 +230,7 @@ int get_full_config_desc_block_async(
         get_config_index,
         config_desc_header_buf_index_tuple + 1,
         sizeof(tusb_desc_configuration_t),
-        get_full_config_desc_block_cb,
+        get_full_config_desc_block_cb_handle_header,
         (uintptr_t) config_buffer
     );
 
