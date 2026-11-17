@@ -241,7 +241,7 @@ int get_full_config_desc_block_async(
 int get_config_desc_header_sync(
     uint8_t dev_addr,
     tusb_desc_configuration_t **config_desc_buffer,
-    uint8_t index
+    uint8_t get_config_index
 ) {
 
     if (!config_desc_buffer) {
@@ -259,7 +259,7 @@ int get_config_desc_header_sync(
     if (
         tuh_descriptor_get_configuration_sync(
             dev_addr,
-            index,
+            get_config_index,
             *config_desc_buffer,
             sizeof(tusb_desc_configuration_t)
         ) != XFER_RESULT_SUCCESS
@@ -272,8 +272,71 @@ int get_config_desc_header_sync(
 
 }
 
-// TODO: Implement
-int get_config_desc_block_sync() {
+/**
+ * Given an address to a pointer, change the pointer to reference an allocation 
+ * of the full configuration descriptor block from the requested device address
+ * and configuration index
+ * 
+ * @param[in] dev_addr The address of the device to request the configuration 
+ * descriptor block from
+ * @param[out] config_block_buffer
+ * @param[in] get_config_index
+ * @return Return -1 if fail and 0 for success
+ * 
+ */
+int get_config_desc_block_sync(
+    uint8_t dev_addr,
+    uint8_t **config_block_buffer,
+    uint8_t get_config_index
+) {
+    // If the provided pointer is not valid, stop
+    if (!config_block_buffer) {
+        return -1;
+
+    }
+
+    tusb_desc_configuration_t config_header;
+
+    // Get the configuration header. If it does not work, stop. The 
+    // configuration descriptor header is just the configuration descriptor,
+    // the first 9 bytes of the entire configuration descriptor block
+    if (
+        tuh_descriptor_get_configuration_sync(
+            dev_addr,
+            get_config_index,
+            &config_header,
+            sizeof(tusb_desc_configuration_t)
+        ) != XFER_RESULT_SUCCESS
+    ) {
+        return -1;
+
+    }
+
+    // Allocate the size of the entire configuration descriptor block after
+    // determining the total size. Set the pointer the user wants to change
+    // to the allocation, not the pointer to pointer
+    *config_block_buffer = calloc(1, config_header.wTotalLength);
+
+    // If the allocation fails, stop
+    if (!(*config_block_buffer)) {
+        return -1;
+
+    }
+
+    // Get the entire configuration descriptor block. If it is unsuccessful,
+    // return -1
+    if (
+        tuh_descriptor_get_configuration_sync(
+            dev_addr,
+            get_config_index,
+            *config_block_buffer,
+            config_header.wTotalLength
+        ) != XFER_RESULT_SUCCESS
+    ) {
+        return -1;
+
+    }
+
     return 0;
 
 }
