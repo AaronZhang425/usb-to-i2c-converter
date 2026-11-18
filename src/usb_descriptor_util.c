@@ -110,6 +110,7 @@ void destroy_config_desc(tusb_desc_configuration_t *config_desc) {
 
 }
 
+// Only used if player does not provide a callback function of their own
 static void default_config_desc_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Could not get configuration descriptor");
