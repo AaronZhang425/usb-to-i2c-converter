@@ -343,12 +343,12 @@ int get_config_desc_block_sync(
 }
 
 
-int get_str_desc_async() {
+int get_str_desc_async(uint8_t dev_adder) {
     return 0;
 
 }
 
-int get_str_desc_async() {
+int get_str_desc_async(uint8_t dev_adder) {
     return 0;
 
 }
