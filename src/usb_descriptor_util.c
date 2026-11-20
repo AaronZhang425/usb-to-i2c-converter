@@ -171,7 +171,7 @@ static void get_full_config_desc_block_cb_handle_block(tuh_xfer_t *xfer) {
 
 }
 
-static void get_full_config_desc_block_cb_handle_header(tuh_xfer_t *xfer) {
+static void get_full_config_desc_block_from_header_cb(tuh_xfer_t *xfer) {
     if (xfer->result != XFER_RESULT_SUCCESS) {
         printf("Could not get configuration descriptor");
 
@@ -194,7 +194,7 @@ static void get_full_config_desc_block_cb_handle_header(tuh_xfer_t *xfer) {
         get_config_index,
         *full_config_buffer,
         sizeof(tusb_desc_configuration_t),
-        get_full_config_desc_block_cb_handle_block,
+        get_full_config_desc_block_from_header_cb,
         0
     );    
 
@@ -231,7 +231,7 @@ int get_full_config_desc_block_async(
         get_config_index,
         config_desc_header_buf_index_tuple + 1,
         sizeof(tusb_desc_configuration_t),
-        get_full_config_desc_block_cb_handle_header,
+        get_full_config_desc_block_from_header_cb,
         (uintptr_t) config_buffer
     );
 
@@ -342,6 +342,11 @@ int get_config_desc_block_sync(
 
 }
 
+/******************************************
+
+STRING DESCRIPTOR FUNCTIONS
+
+******************************************/
 
 int get_str_desc_async(uint8_t dev_adder) {
     return 0;
