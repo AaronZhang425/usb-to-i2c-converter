@@ -7,9 +7,10 @@
 // HCMD is for Host Command for lack of better prefix
 
 #define HCMD_NEW_I2C_HOST 0
-#define HCMD_GET_USB_DEV_DESC 1
-#define HCMD_GET_USB_CONFIG_DESC 2
-#define HCMD_GET_MAX_USB_DEV 3
-#define HCMD_POLL_EVENTS 4
+#define HCMD_USB_CMD 1
+// #define HCMD_GET_USB_DEV_DESC 1
+// #define HCMD_GET_USB_CONFIG_DESC 2
+// #define HCMD_GET_MAX_USB_DEV 3
+#define HCMD_POLL_EVENTS 2
 
 #endif

@@ -348,12 +348,12 @@ STRING DESCRIPTOR FUNCTIONS
 
 ******************************************/
 
-int get_str_desc_async(uint8_t dev_adder) {
+int get_str_desc_async(uint8_t dev_addr) {
     return 0;
 
 }
 
-int get_str_desc_async(uint8_t dev_adder) {
+int get_str_desc_async(uint8_t dev_addr) {
     return 0;
 
 }

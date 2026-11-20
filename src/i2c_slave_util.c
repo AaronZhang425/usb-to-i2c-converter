@@ -125,29 +125,29 @@ static void read_from_slave_handler(i2c_inst_t *i2c) {
 
             break;
 
-        case HCMD_GET_USB_DEV_DESC:
-            used_buffer_size += get_usb_dev_desc_handler(
-                &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE - used_buffer_size
-            );
+        // case HCMD_GET_USB_DEV_DESC:
+        //     used_buffer_size += get_usb_dev_desc_handler(
+        //         &i2c_buffer[used_buffer_size],
+        //         DEFAULT_BUFFER_SIZE - used_buffer_size
+        //     );
 
-            // buffer[0] = MAX_USB_DEVICES_EVENT;
-            // buffer[1] = CFG_TUH_DEVICE_MAX;
-            // used_buffer_size = 2;
+        //     // buffer[0] = MAX_USB_DEVICES_EVENT;
+        //     // buffer[1] = CFG_TUH_DEVICE_MAX;
+        //     // used_buffer_size = 2;
 
-            // tusb_desc_device_t *dev_desc;
-            // get_dev_desc_sync(hcmd_arg, &dev_desc);
+        //     // tusb_desc_device_t *dev_desc;
+        //     // get_dev_desc_sync(hcmd_arg, &dev_desc);
 
 
-            break;
+        //     break;
 
-        case HCMD_GET_USB_CONFIG_DESC:
-            used_buffer_size += get_usb_config_desc_handler(
-                &i2c_buffer[used_buffer_size],
-                DEFAULT_BUFFER_SIZE - used_buffer_size
-            );
+        // case HCMD_GET_USB_CONFIG_DESC:
+        //     used_buffer_size += get_usb_config_desc_handler(
+        //         &i2c_buffer[used_buffer_size],
+        //         DEFAULT_BUFFER_SIZE - used_buffer_size
+        //     );
 
-            break;
+        //     break;
 
         case HCMD_GET_MAX_USB_DEV:
             used_buffer_size += get_max_usb_dev_handler(
