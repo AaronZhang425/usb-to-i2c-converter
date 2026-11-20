@@ -18,7 +18,7 @@
 #define SCL_MASTER_GPIO_PIN 5
 #define I2C_MASTER_BUS i2c0
 
-void pi_pico_init() {
+void pi_pico_init(void) {
     stdio_init_all();
 
     gpio_init(LED_PIN);
@@ -29,7 +29,7 @@ void pi_pico_init() {
     
 }
 
-int main() {
+int main(void) {
     pi_pico_init();
     usb_hosting_init();
 

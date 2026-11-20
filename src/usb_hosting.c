@@ -16,7 +16,7 @@ struct deque *event_deque;
 
 // TODO: handle new USB devices during runtime
 
-void usb_hosting_init() {
+void usb_hosting_init(void) {
     tusb_rhport_init_t host_init = {
         .role = TUSB_ROLE_HOST,
         .speed = TUSB_SPEED_AUTO
