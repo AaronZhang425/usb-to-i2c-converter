@@ -41,7 +41,10 @@ add_executable(usb_to_i2c
         src/usb_hosting.c
         src/deque.c
         src/usb_event.c
-        src/usb_descriptor_util.c
+        # src/usb_descriptor_util.c
+        src/usb_desc_util/device_desc.c
+        src/usb_desc_util/config_desc.c
+        src/usb_desc_util/string_desc.c
 )
 
 pico_set_program_name(usb_to_i2c "usb_to_i2c")
@@ -69,6 +72,7 @@ target_link_libraries(
 
 target_include_directories(usb_to_i2c PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/usb_desc_util
 )
 
 pico_add_extra_outputs(usb_to_i2c)
