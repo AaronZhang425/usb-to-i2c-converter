@@ -45,6 +45,7 @@ add_executable(usb_to_i2c
         src/usb_desc_util/device_desc.c
         src/usb_desc_util/config_desc.c
         src/usb_desc_util/string_desc.c
+        src/usb_desc_util/usb_transfer.c
 )
 
 pico_set_program_name(usb_to_i2c "usb_to_i2c")
