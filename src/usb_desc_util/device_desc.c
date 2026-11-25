@@ -4,6 +4,22 @@
 
 #include "usb_desc_util/device_desc.h"
 
+/**
+ * 
+ * WARING: THE WHEN THE ADDRESS OF A POINTER IN THE STACK IS PASSED TO THE 
+ * ASNYC FUNCTIONS, IT MAY NOT EXIST WHEN IT IS WRITTEN TO
+ * 
+ * TODO: FIX UNREACHABLE MEMORY ISSUES
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
+
 // Frees a device descriptor
 void destroy_dev_desc(tusb_desc_device_t *dev_desc) {
     free(dev_desc);
