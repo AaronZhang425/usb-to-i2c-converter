@@ -9,12 +9,7 @@
  * WARING: THE WHEN THE ADDRESS OF A POINTER IN THE STACK IS PASSED TO THE 
  * ASNYC FUNCTIONS, IT MAY NOT EXIST WHEN IT IS WRITTEN TO
  * 
- * TODO: FIX UNREACHABLE MEMORY ISSUES
- * 
- * 
- * 
- * 
- * 
+ * TODO: DOUBLE CHECK FIXES (MAYBE PATCHED)
  * 
  * 
  */
@@ -36,54 +31,54 @@ static void default_config_desc_cb(tuh_xfer_t *xfer) {
 
 }
 
+/**
+ * @param[in] dev_addr The address of the device to get the configuration 
+ * descriptor header from
+ * @param[in] get_config_index The index of the configuration to get when sending
+ * the GET_CONFIGURATION request. This index can be different from the actual
+ * index of the configuration
+ * @param[in] callback The callback function to handle the reply from the 
+ * USB device. Must free xfer->user_data at the end
+ */
 int get_config_desc_header_async(
     uint8_t dev_addr,
-    tusb_desc_configuration_t **config_desc_header_buffer,
     uint8_t get_config_index,
     void (*callback)(tuh_xfer_t *xfer)
 ) {
-
-    if (!config_desc_header_buffer) {
+    
+    if (!callback) {
         return -1;
 
     }
 
-    if (!callback) {
-        callback = default_config_desc_cb;
-
-    }
-
-    *config_desc_header_buffer = malloc(sizeof(tusb_desc_configuration_t));
+    tusb_desc_configuration_t *config_desc_header_buffer = calloc(
+        1,
+        sizeof(tusb_desc_configuration_t)
+    );
     
-    if (!(*config_desc_header_buffer)) {
+    if (!config_desc_header_buffer) {
         return -1;        
 
     }
 
-    bool status = tuh_descriptor_get_configuration(
-        dev_addr,
-        get_config_index,
-        *config_desc_header_buffer,
-        sizeof(tusb_desc_configuration_t),
-        callback,
-        0
-    );
-
-    if (!status) {
-        free(*config_desc_header_buffer);
+    // Pass the ptr to allocated data in heap to the user_data variable
+    // for easy freeing to avoid complex ptr arithmetic
+    if (
+        !tuh_descriptor_get_configuration(
+            dev_addr,
+            get_config_index,
+            config_desc_header_buffer,
+            sizeof(tusb_desc_configuration_t),
+            callback,
+            (uintptr_t) config_desc_header_buffer
+        )
+    ) {
+        free(config_desc_header_buffer);
         return -1;
 
-    }    
+    }
 
     return 0;
-
-}
-
-static void get_full_config_desc_block_cb_handle_block(tuh_xfer_t *xfer) {
-    if (xfer->result != XFER_RESULT_SUCCESS) {
-        printf("Could not get full configuration descriptor block");
-
-    }
 
 }
 
@@ -95,61 +90,75 @@ static void get_full_config_desc_block_from_header_cb(tuh_xfer_t *xfer) {
     
     // The value in the byte before is the get config value, assigned in
     // get_full_config_desc_block_async(...)
-    uint8_t get_config_index = xfer->buffer[-1]; 
-    
-    tusb_desc_configuration_t *config_desc_header = (
-        (tusb_desc_configuration_t *) xfer->buffer
-    );
-    
-    uint8_t **full_config_buffer = (uint8_t **) (xfer->user_data);
-    *full_config_buffer = calloc(1, config_desc_header->wTotalLength);
+    uint8_t get_config_index = xfer->buffer[-(sizeof(void *(tuh_xfer_t)) + 1)]; 
+    void (*callback)(tuh_xfer_t) = xfer->buffer[-sizeof(void *(tuh_xfer_t))]; 
 
-    // Do something
-    bool status = tuh_descriptor_get_configuration(
-        xfer->daddr,
-        get_config_index,
-        *full_config_buffer,
-        sizeof(tusb_desc_configuration_t),
-        get_full_config_desc_block_from_header_cb,
-        0
-    );    
+    uint8_t *full_config_buffer = (
+        calloc(1, ((tusb_desc_configuration_t *) xfer->buffer)->wTotalLength)
+    ); 
 
-    // The buffer defined in get_full_config_desc_block_async(...) points to
-    // get_config_index, not the actual descriptor buffer
-    free((xfer->buffer) - 1);
-    
+    if (
+        !tuh_descriptor_get_configuration(
+            xfer->daddr,
+            get_config_index,
+            full_config_buffer,
+            ((tusb_desc_configuration_t *) xfer->buffer)->wTotalLength,
+            callback,
+            (uintptr_t) full_config_buffer
+        )
+    ) {
+        printf("Could not get full config descriptor");
+
+    }  
+
+    free(xfer->user_data);
 
 }
 
 int get_full_config_desc_block_async(
     uint8_t dev_addr,
-    uint8_t **config_buffer,
     uint8_t get_config_index,
     void (*callback)(tuh_xfer_t xfer)
 ) {
 
     // Contains the descriptor header and the index of the GET_CONFIGURATION
     // index (different from the SET_CONFIGURATION index)
-    uint8_t *config_desc_header_buf_index_tuple = calloc(
+    uint8_t *config_desc_buf_and_meta_data = calloc(
         1,
-        sizeof(tusb_desc_configuration_t) + 1
+        (
+            sizeof(tusb_desc_configuration_t)
+            + sizeof(callback)
+            + sizeof(get_config_index)
+        )
     );
 
-    if (!config_desc_header_buf_index_tuple) {
+    if (!config_desc_buf_and_meta_data) {
         return -1;
         
     }
 
-    config_desc_header_buf_index_tuple[0] = get_config_index;
+    config_desc_buf_and_meta_data[0] = get_config_index;
+    config_desc_buf_and_meta_data[1] = callback;
 
-    bool status = tuh_descriptor_get_configuration(
-        dev_addr,
-        get_config_index,
-        config_desc_header_buf_index_tuple + 1,
-        sizeof(tusb_desc_configuration_t),
-        get_full_config_desc_block_from_header_cb,
-        (uintptr_t) config_buffer
-    );
+    // The buffer for the actual descriptor header is not at index 0
+    if (
+        !tuh_descriptor_get_configuration(
+            dev_addr,
+            get_config_index,
+            (
+                config_desc_buf_and_meta_data
+                + sizeof(get_config_index)
+                + sizeof(callback)
+            ),
+            sizeof(tusb_desc_configuration_t),
+            get_full_config_desc_block_from_header_cb,
+            (uintptr_t) config_desc_buf_and_meta_data
+        )
+    ) {
+        free(config_desc_buf_and_meta_data);
+        return -1;
+
+    }
 
     return 0;
 

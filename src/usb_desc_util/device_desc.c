@@ -10,22 +10,17 @@ void destroy_dev_desc(tusb_desc_device_t *dev_desc) {
 
 }
 
-static void default_dev_desc_cb(tuh_xfer_t *xfer) {
-    if (xfer->result != XFER_RESULT_SUCCESS) {
-        printf("Could not get device descriptor");
-
-    }
-
-    free(xfer->user_data);    
-
-}
-
+/**
+ * @param[in] dev_addr The device address to get the device descriptor from
+ * @param[in] callback Must free xfer->user_data at the end
+ */
 int get_dev_desc_async(
     uint8_t dev_addr,
     void (*callback)(tuh_xfer_t *xfer)
 ) {
+
     if (!callback) {
-        callback = default_dev_desc_cb;
+        return -1;
 
     }
 
@@ -37,7 +32,7 @@ int get_dev_desc_async(
     }
 
     if (
-        tuh_descriptor_get_device(
+        !tuh_descriptor_get_device(
             dev_addr,
             dev_desc_buffer,
             sizeof(tusb_desc_device_t),
